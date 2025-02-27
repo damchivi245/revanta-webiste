@@ -20,57 +20,27 @@ const products = [
     price: "$150/day",
     image: "/images/car-c.jpg",
   },
-  {
-    id: 3,
-    name: "Luxury Car C",
-    price: "$150/day",
-    image: "/images/car-c.jpg",
-  },
-  {
-    id: 3,
-    name: "Luxury Car C",
-    price: "$150/day",
-    image: "/images/car-c.jpg",
-  },
-  {
-    id: 3,
-    name: "Luxury Car C",
-    price: "$150/day",
-    image: "/images/car-c.jpg",
-  },
-  {
-    id: 3,
-    name: "Luxury Car C",
-    price: "$150/day",
-    image: "/images/car-c.jpg",
-  },
-  {
-    id: 3,
-    name: "Luxury Car C",
-    price: "$150/day",
-    image: "/images/car-c.jpg",
-  },
 ];
 
 const ProductList = () => {
   return (
     <div className="w-full">
       <div className="flex flex-col items-center justify-center gap-2">
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {products.map((product) => (
             <BackgroundGradient
               key={product.id}
-              className="bg-zinc-800 w-full p-2 rounded-md "
+              className="w-full p-2 rounded-md bg-zinc-800 "
             >
               <img
                 src={product.image}
                 alt={product.name}
-                className="w-full h-60 object-cover rounded-md"
+                className="object-cover w-full rounded-md h-60"
               />
-              <h3 className="text-xl font-montserrat text-white ">
+              <h3 className="text-xl text-white font-montserrat ">
                 {product.name}
               </h3>
-              <p className="text-yellow-400 font-medium">{product.price}</p>
+              <p className="font-medium text-yellow-400">{product.price}</p>
               <Button variant="revanta" className="w-full mt-3">
                 Rent Now
               </Button>

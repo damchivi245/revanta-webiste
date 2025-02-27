@@ -26,7 +26,7 @@ const Navigate = () => {
 
   return (
     <nav className="fixed inset-x-0 z-50 flex items-center justify-center top-5">
-      <div className="w-[90%] md:w-[64rem] h-16 pl-6 pr-1 bg-gradient-to-r from-[#1e1e1e] via-[#2b2b2b] to-[#1e1e1e] shadow-lg backdrop-blur-md rounded-full flex justify-between items-center border border-zinc-700/50">
+      <div className="w-[90%] md:w-[64rem] h-14 pl-6 pr-1 bg-gradient-to-r from-[#1e1e1e]/70 via-[#2b2b2b]/70 to-[#1e1e1e]/70 shadow-lg backdrop-blur-md rounded-full flex justify-between items-center border border-zinc-700/50">
         {/* Logo */}
         <div className="text-2xl font-bold tracking-widest text-yellow-500 md:text-3xl font-cinzel drop-shadow-lg">
           Revanta
@@ -38,7 +38,7 @@ const Navigate = () => {
             <Link
               key={item.name}
               to={item.href}
-              className="px-5 py-2 text-white transition rounded-full font-montserrat bg-zinc-900/50 hover:bg-white/20"
+              className="px-5 py-2 text-white transition rounded-full font-montserrat bg-zinc-800 hover:bg-white/20"
             >
               {item.name}
             </Link>
