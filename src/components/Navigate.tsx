@@ -12,13 +12,13 @@ import {
 import { Button } from "./ui/button";
 
 const navigation = [
-  { name: "Grand Entrance", href: "/" },
-  { name: "Exquisite Collection", href: "/products" },
-  { name: "Exclusive Reservation", href: "/" },
+  { id: 1, name: "Grand Entrance", href: "/" },
+  { id: 2, name: "Exquisite Collection", href: "/products" },
+  { id: 3, name: "Exclusive Reservation", href: "/" },
 ];
 const auth = [
-  { name: "Sign In", href: "/login" },
-  { name: "Sign Up", href: "/register" },
+  { id: 1, name: "Sign In", href: "/login" },
+  { id: 2, name: "Sign Up", href: "/register" },
 ];
 
 const Navigate = () => {
@@ -36,7 +36,7 @@ const Navigate = () => {
         <div className="items-center hidden gap-6 md:flex">
           {navigation.map((item) => (
             <Link
-              key={item.name}
+              key={item.id}
               to={item.href}
               className="px-5 py-2 text-white transition rounded-full font-montserrat bg-zinc-800 hover:bg-white/20"
             >
@@ -60,7 +60,12 @@ const Navigate = () => {
             <DropdownMenuSeparator />
             <div className="flex flex-col items-center justify-center w-full gap-2">
               {auth.map((item) => (
-                <Button className="w-full" value={item.name} variant="revanta">
+                <Button
+                  className="w-full"
+                  key={item.id}
+                  value={item.name}
+                  variant="revanta"
+                >
                   {" "}
                   <Link to={item.href}>{item.name}</Link>
                 </Button>

@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { BackgroundGradient } from "../backgrounds/background-gradient";
+import { Link } from "react-router-dom";
 
 const products = [
   {
@@ -32,18 +33,21 @@ const ProductList = () => {
               key={product.id}
               className="w-full p-2 rounded-md bg-zinc-800 "
             >
-              <img
-                src={product.image}
-                alt={product.name}
-                className="object-cover w-full rounded-md h-60"
-              />
-              <h3 className="text-xl text-white font-montserrat ">
-                {product.name}
-              </h3>
-              <p className="font-medium text-yellow-400">{product.price}</p>
-              <Button variant="revanta" className="w-full mt-3">
-                Rent Now
-              </Button>
+              <Link to={`/product/${product.id}`}>
+                {" "}
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="object-cover w-full rounded-md h-60"
+                />
+                <h3 className="text-xl text-white font-montserrat ">
+                  {product.name}
+                </h3>
+                <p className="font-medium text-yellow-400">{product.price}</p>
+                <Button variant="revanta" className="w-full mt-3">
+                  Rent Now
+                </Button>
+              </Link>
             </BackgroundGradient>
           ))}
         </div>

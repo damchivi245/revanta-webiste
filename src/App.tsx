@@ -8,6 +8,7 @@ import RegisterPage from "./pages/Auth/RegisterPage";
 import ForgotPasswordPage from "./pages/Auth/ForgotPasswordPage";
 import { Toaster } from "@/components/ui/sonner";
 import ProductsPage from "./pages/Product/ProductsPage";
+import ProductDetailPage from "./pages/Product/ProductDetail";
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/products" element={<ProductsPage />} />
+          <Route path="/product/:id" element={<ProductDetailPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
