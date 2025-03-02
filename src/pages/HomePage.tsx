@@ -9,15 +9,10 @@ import { CarouselSize } from "@/components/ProductCarousel";
 import { CarouselBrand } from "@/components/BrandCarousel";
 import { DatePickerWithRange } from "@/components/DateRangePicker";
 import { TimePicker } from "@/components/TimePicker";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { BackgroundBeamsWithCollision } from "@/components/backgrounds/background-beams-with-collision";
 import RentalInstructions from "@/components/RentalInstructions";
+import SelectLocation from "@/components/SelectLocation";
 
 const slogans = [
   "Revanta – Where Luxury Meets the Road.",
@@ -27,11 +22,7 @@ const slogans = [
   "Experience luxury cars with professional service.",
 ];
 
-const locations = [
-  { id: 1, name: "Ho Chi Minh " },
-  { id: 2, name: "Ha Noi " },
-  { id: 3, name: "Da Nang " },
-];
+
 
 const HomePage = () => {
   const textRef = useRef<HTMLDivElement>(null);
@@ -72,28 +63,13 @@ const HomePage = () => {
             <div className="flex flex-col items-center justify-between w-full h-full gap-5 p-5 md:flex-row">
               <div className="flex flex-col items-start justify-between w-full gap-1">
                 <h1 className="text-sm font-montserrat ">Pick up location</h1>
-                <Select>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a fruit" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-zinc-700/70 backdrop-blur-md">
-                    {locations.map((location, index) => (
-                      <SelectItem
-                        key={index}
-                        value={location.name}
-                        className="text-white"
-                      >
-                        {location.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <SelectLocation />
               </div>
               <div className="w-full">
                 <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
                   <div className="flex flex-col items-start justify-between w-full gap-1">
                     <h1 className="text-sm font-montserrat">
-                      Date of vehicle receipt
+                      Car rental date
                     </h1>
                     <DatePickerWithRange />
                   </div>
