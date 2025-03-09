@@ -22,8 +22,6 @@ const slogans = [
   "Experience luxury cars with professional service.",
 ];
 
-
-
 const HomePage = () => {
   const textRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
@@ -68,9 +66,7 @@ const HomePage = () => {
               <div className="w-full">
                 <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
                   <div className="flex flex-col items-start justify-between w-full gap-1">
-                    <h1 className="text-sm font-montserrat">
-                      Car rental date
-                    </h1>
+                    <h1 className="text-sm font-montserrat">Car rental date</h1>
                     <DatePickerWithRange />
                   </div>
                   <div className="flex flex-col items-start justify-between w-full gap-1">

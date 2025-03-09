@@ -1,35 +1,49 @@
 import axios from "axios";
+import { useAuthStore } from "@/store/authStore"; // Import Zustand Store
 
-// Tạo Axios instance
 const api = axios.create({
-  baseURL: "https://your-api.com",
-  withCredentials: true, // Cho phép gửi cookie HTTP-only
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+  withCredentials: true, // Gửi cookie HTTP-only (refreshToken)
 });
 
-// Interceptor để tự động refresh token khi accessToken hết hạn
+// Thêm token vào headers trước mỗi request
+api.interceptors.request.use((config) => {
+  const accessToken = useAuthStore.getState().accessToken; // ✅ Lấy token từ Zustand
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
+  return config;
+});
+
+// api.interceptors.response.use((response) => {
+//   if (response.data?.data?.accessToken) {
+//     response.data = response.data.data;
+//   }
+//   return response;
+// });
+// Xử lý khi accessToken hết hạn (401 Unauthorized)
 api.interceptors.response.use(
-  (response) => response, // Trả về nếu không có lỗi
+  (response) => response,
   async (error) => {
     if (error.response?.status === 401) {
       try {
-        // Gọi API refresh-token để lấy accessToken mới
-        const res = await axios.get("https://your-api.com/refresh-token", {
-          withCredentials: true, // Gửi cookie HTTP-only chứa refreshToken
-        });
+        const res = await axios.get<{ accessToken: string }>(
+          ` ${import.meta.env.VITE_API_BASE_URL}/refresh-token"`,
+          { withCredentials: true }
+        );
 
-        // Cập nhật accessToken mới vào headers
-        api.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${res.data.accessToken}`;
-
-        // Gửi lại request ban đầu với accessToken mới
+        const newToken = res.data.accessToken;
+        useAuthStore.getState().setAccessToken(newToken); // ✅ Lưu vào Zustand
+        // Gửi lại request với accessToken mới
+        error.config.headers.Authorization = `Bearer ${newToken}`;
         return api(error.config);
       } catch (refreshError) {
         console.error(
-          "Refresh Token expired. Please login again.",
+          "Refresh token expired. Please login again.",
           refreshError
         );
-        window.location.href = "/login"; // Chuyển hướng về trang đăng nhập
+        useAuthStore.getState().logout(); // Xóa token trong Zustand
+        window.location.href = "/login"; // Chuyển hướng đăng nhập
       }
     }
     return Promise.reject(error);

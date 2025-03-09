@@ -1,37 +1,97 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import api from "@/api/api";
+import { User } from "@/types/types";
 import { create } from "zustand";
+import { toast } from "sonner";
+
 interface AuthState {
-  user: { id: string; name: string } | null;
   accessToken: string | null;
-  setUser: (user: { id: string; name: string } | null) => void;
+  user: User | null;
+  loading: boolean;
+  error: string | null;
   setAccessToken: (token: string | null) => void;
+  setUser: (userData: User | null) => void;
+  register: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
+
+  fetchUser: () => Promise<void>;
   logout: () => void;
-  refreshAccessToken: () => Promise<string | undefined>;
 }
-const useAuthStore = create<AuthState>((set) => ({
+
+export const useAuthStore = create<AuthState>((set, get) => ({
+  accessToken: localStorage.getItem("accessToken") || null,
   user: null,
-  accessToken: null,
+  loading: false,
+  error: null,
 
-  setUser: (user: any) => set({ user }),
-  setAccessToken: (token) => set({ accessToken: token }),
-
-  logout: () => {
-    set({ user: null, accessToken: null });
-    localStorage.removeItem("accessToken");
-    window.location.href = "/login"; // Chuyển hướng về trang login
+  setAccessToken: (token) => {
+    set({ accessToken: token });
+    if (token) {
+      localStorage.setItem("accessToken", token);
+    } else {
+      localStorage.removeItem("accessToken");
+    }
   },
 
-  refreshAccessToken: async () => {
+  setUser: (userData) => {
+    set({ user: userData });
+  },
+
+  register: async (email, password) => {
+    set({ loading: true, error: null });
     try {
-      const res = await api.get("/refresh-token", { withCredentials: true });
-      set({ accessToken: res.data.accessToken });
-      return res.data.accessToken;
-    } catch {
-      console.error("Refresh token expired. Logging out...");
-      useAuthStore.getState().logout();
+      const res = await api.post("/register", { email, password });
+      console.log("Check res:", res);
+      toast.success(res.data.message);
+    } catch (error: any) {
+      set({ error: error.response?.data.message });
+      toast.error(error.response?.data.message);
+    } finally {
+      set({ loading: false });
     }
+  },
+
+  login: async (email, password) => {
+    set({ loading: true, error: null });
+
+    try {
+      const res = await api.post("/login", { email, password });
+      console.log("Check res", res);
+      const token = res.data.data.accessToken;
+      if (!token) throw new Error("Không nhận được accessToken");
+      get().setAccessToken(token);
+      await get().fetchUser();
+
+      toast.success(res.data.message);
+    } catch (error: any) {
+      set({ error: error.response?.data.message });
+      toast.error(error.data.message);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  fetchUser: async () => {
+    try {
+      const token = get().accessToken;
+      if (!token) return;
+
+      const res = await api.get("/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      set({ user: res.data });
+    } catch (error: any) {
+      set({ error: error.response?.data?.message || "Lỗi lấy thông tin user" });
+    }
+  },
+
+  logout: () => {
+    localStorage.removeItem("accessToken");
+    set({ accessToken: null, user: null });
   },
 }));
 
-export default useAuthStore;
+if (localStorage.getItem("accessToken")) {
+  useAuthStore.getState().fetchUser();
+}

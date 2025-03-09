@@ -23,7 +23,6 @@ const auth = [
 
 const Navigate = () => {
   const [isOpen, setIsOpen] = useState(false);
-
   return (
     <nav className="fixed inset-x-0 z-50 flex items-center justify-center top-5">
       <div className="w-[90%] md:w-[64rem] h-14 pl-6 pr-1 bg-gradient-to-r from-[#1e1e1e]/70 via-[#2b2b2b]/70 to-[#1e1e1e]/70 shadow-lg backdrop-blur-md rounded-full flex justify-between items-center border border-zinc-700/50">

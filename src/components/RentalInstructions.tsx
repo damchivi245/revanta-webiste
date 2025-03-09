@@ -3,13 +3,6 @@ import { CheckCircle } from "lucide-react";
 const RentalInstructions = () => {
   return (
     <div className="relative h-48 rounded-md bg-zinc-700">
-      {/* Hình ảnh nền */}
-      <img
-        src="/pictures/banner.jpg"
-        alt="Rental Banner"
-        className="object-center w-full h-full rounded-md"
-      />
-
       {/* Danh sách các bước với icon */}
       <div className="absolute grid grid-cols-1 gap-6 text-center inset-10 md:grid-cols-3">
         {[

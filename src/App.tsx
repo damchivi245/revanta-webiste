@@ -11,6 +11,8 @@ import ProductsPage from "./pages/Product/ProductsPage";
 import ProductDetailPage from "./pages/Product/ProductDetail";
 import BookingPage from "./pages/Payment/BookingPage";
 import PaymentPage from "./pages/Payment/PaymentPage";
+import UserProfilePage from "./pages/User/UserProfilePage";
+
 import ScrollToTop from "./components/ScrollToTop";
 
 export default function App() {
@@ -29,11 +31,12 @@ export default function App() {
           <Route path="/product/:id" element={<ProductDetailPage />} />
           <Route path="/booking/:id" element={<BookingPage />} />
           <Route path="/payment/:id" element={<PaymentPage />} />
+          <Route path="/user/:id" element={<UserProfilePage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
-      <Toaster />
+      <Toaster position="top-center" expand={false} richColors />
     </Router>
   );
 }
