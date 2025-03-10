@@ -5,6 +5,7 @@ export type User = {
     password: string;
     firstName: string;
     lastName: string;
+    image: string;
     address: string;
     phone: string;
     accessToken: string;

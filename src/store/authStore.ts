@@ -65,13 +65,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       toast.success(res.data.message);
     } catch (error: any) {
       set({ error: error.response?.data.message });
-      toast.error(error.data.message);
+      toast.error(error.response?.data.message);
     } finally {
       set({ loading: false });
     }
   },
 
   fetchUser: async () => {
+    set({ loading: true, error: null });
     try {
       const token = get().accessToken;
       if (!token) return;
@@ -82,7 +83,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       set({ user: res.data });
     } catch (error: any) {
-      set({ error: error.response?.data?.message || "Lỗi lấy thông tin user" });
+      set({ error: error.response?.data?.message });
+    } finally {
+      set({ loading: false });
     }
   },
 

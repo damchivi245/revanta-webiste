@@ -1,53 +1,85 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
-import { useAuthStore } from "@/store/authStore"; // Import Zustand Store
+import { useAuthStore } from "@/store/authStore";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   withCredentials: true, // Gửi cookie HTTP-only (refreshToken)
 });
 
-// Thêm token vào headers trước mỗi request
+// Thêm accessToken vào headers trước mỗi request
 api.interceptors.request.use((config) => {
-  const accessToken = useAuthStore.getState().accessToken; // ✅ Lấy token từ Zustand
+  const accessToken = useAuthStore.getState().accessToken;
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
   return config;
 });
 
-// api.interceptors.response.use((response) => {
-//   if (response.data?.data?.accessToken) {
-//     response.data = response.data.data;
-//   }
-//   return response;
-// });
+let isRefreshing = false;
+let failedQueue: any[] = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (token) {
+      prom.resolve(token);
+    } else {
+      prom.reject(error);
+    }
+  });
+
+  failedQueue = [];
+};
+
 // Xử lý khi accessToken hết hạn (401 Unauthorized)
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401) {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 403 && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return api(originalRequest);
+          })
+          .catch((err) => {
+            return Promise.reject(err);
+          });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
       try {
         const res = await axios.get<{ accessToken: string }>(
-          ` ${import.meta.env.VITE_API_BASE_URL}/refresh-token"`,
+          `${import.meta.env.VITE_API_BASE_URL}/refresh-token`,
           { withCredentials: true }
         );
+        console.log("Check res", res);
 
         const newToken = res.data.accessToken;
-        useAuthStore.getState().setAccessToken(newToken); // ✅ Lưu vào Zustand
-        // Gửi lại request với accessToken mới
-        error.config.headers.Authorization = `Bearer ${newToken}`;
-        return api(error.config);
+        console.log("Check newToken", newToken);
+        useAuthStore.getState().setAccessToken(newToken); // Lưu token mới vào Zustand
+
+        processQueue(null, newToken);
+
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        return api(originalRequest);
       } catch (refreshError) {
-        console.error(
-          "Refresh token expired. Please login again.",
-          refreshError
-        );
-        useAuthStore.getState().logout(); // Xóa token trong Zustand
-        window.location.href = "/login"; // Chuyển hướng đăng nhập
+        processQueue(refreshError, null);
+        useAuthStore.getState().logout();
+        window.location.href = "/login"; // Chuyển hướng nếu refresh token hết hạn
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
+
     return Promise.reject(error);
   }
 );
-
 export default api;

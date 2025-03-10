@@ -10,6 +10,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "./ui/button";
+import { useAuthStore } from "@/store/authStore";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 const navigation = [
   { id: 1, name: "Grand Entrance", href: "/" },
@@ -22,13 +24,15 @@ const auth = [
 ];
 
 const Navigate = () => {
+  const { user, logout, loading } = useAuthStore();
+
   const [isOpen, setIsOpen] = useState(false);
   return (
     <nav className="fixed inset-x-0 z-50 flex items-center justify-center top-5">
       <div className="w-[90%] md:w-[64rem] h-14 pl-6 pr-1 bg-gradient-to-r from-[#1e1e1e]/70 via-[#2b2b2b]/70 to-[#1e1e1e]/70 shadow-lg backdrop-blur-md rounded-full flex justify-between items-center border border-zinc-700/50">
         {/* Logo */}
         <div className="text-2xl font-bold tracking-widest text-yellow-500 md:text-3xl font-cinzel drop-shadow-lg">
-          Revanta
+          <Link to={"/"}>Revanta</Link>
         </div>
 
         {/* Menu Desktop */}
@@ -58,17 +62,36 @@ const Navigate = () => {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <div className="flex flex-col items-center justify-center w-full gap-2">
-              {auth.map((item) => (
-                <Button
-                  className="w-full"
-                  key={item.id}
-                  value={item.name}
-                  variant="revanta"
-                >
+              {user ? (
+                <div className="flex gap-1">
+                  <Avatar>
+                    <AvatarImage
+                      src={`${user.data.image}`}
+                      alt={`${user.data.email}`}
+                    />
+                    <AvatarFallback>A</AvatarFallback>
+                  </Avatar>
+                  <Button asChild>
+                    <Link to={`user/${user.data.id}`}>{user.data.email}</Link>
+                  </Button>
+                  <Button onClick={logout}>Log Out</Button>
+                </div>
+              ) : (
+                <div>
                   {" "}
-                  <Link to={item.href}>{item.name}</Link>
-                </Button>
-              ))}
+                  {auth.map((item) => (
+                    <Button
+                      className="w-full"
+                      key={item.id}
+                      value={item.name}
+                      variant="revanta"
+                    >
+                      {" "}
+                      <Link to={item.href}>{item.name}</Link>
+                    </Button>
+                  ))}
+                </div>
+              )}
             </div>
           </DropdownMenuContent>
         </DropdownMenu>

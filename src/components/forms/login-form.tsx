@@ -22,13 +22,13 @@ export function LoginForm({
     event.preventDefault(); // ✅ Chặn reload trang
     await login(email, password);
   };
-
+  console.log("Check user", user);
   useEffect(() => {
     if (user) {
       if (user?.data.role === "ADMIN") {
-        navigate("/dashboard"); // ✅ Chuyển admin đến dashboard
+        navigate("/dashboard");
       } else {
-        navigate("/"); // ✅ Chuyển user thông thường về trang chủ
+        navigate(`/`);
       }
     }
   }, [user, navigate]);
