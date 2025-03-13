@@ -13,7 +13,6 @@ interface AuthState {
   setUser: (userData: User | null) => void;
   register: (email: string, password: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
-
   fetchUser: () => Promise<void>;
   logout: () => void;
 }
@@ -41,7 +40,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ loading: true, error: null });
     try {
       const res = await api.post("/register", { email, password });
-      console.log("Check res:", res);
       toast.success(res.data.message);
     } catch (error: any) {
       set({ error: error.response?.data.message });
@@ -56,12 +54,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     try {
       const res = await api.post("/login", { email, password });
-      console.log("Check res", res);
       const token = res.data.data.accessToken;
       if (!token) throw new Error("Không nhận được accessToken");
       get().setAccessToken(token);
       await get().fetchUser();
-
       toast.success(res.data.message);
     } catch (error: any) {
       set({ error: error.response?.data.message });
@@ -74,13 +70,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   fetchUser: async () => {
     set({ loading: true, error: null });
     try {
-      const token = get().accessToken;
-      if (!token) return;
-
-      const res = await api.get("/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
+      const res = await api.get("/me");
       set({ user: res.data });
     } catch (error: any) {
       set({ error: error.response?.data?.message });
@@ -94,7 +84,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ accessToken: null, user: null });
   },
 }));
-
 if (localStorage.getItem("accessToken")) {
   useAuthStore.getState().fetchUser();
 }

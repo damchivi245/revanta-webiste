@@ -24,7 +24,7 @@ const auth = [
 ];
 
 const Navigate = () => {
-  const { user, logout, loading } = useAuthStore();
+  const { user, logout } = useAuthStore();
 
   const [isOpen, setIsOpen] = useState(false);
   return (
@@ -54,45 +54,73 @@ const Navigate = () => {
             R
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="border-0 bg-zinc-800/70 backdrop-blur-md"
+            className="border-zinc-600 bg-zinc-800/60 backdrop-blur-md"
             align="end"
           >
             <DropdownMenuLabel className="text-white">
               My Account
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <div className="flex flex-col items-center justify-center w-full gap-2">
-              {user ? (
-                <div className="flex gap-1">
+
+            {user ? (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="flex flex-col items-center justify-center w-full gap-1"
+              >
+                <div className="flex items-center justify-between gap-1">
                   <Avatar>
                     <AvatarImage
                       src={`${user.data.image}`}
                       alt={`${user.data.email}`}
                     />
-                    <AvatarFallback>A</AvatarFallback>
+                    <AvatarFallback className="bg-zinc-500/50">
+                      {(
+                        user?.data?.firstName?.[0] || user?.data?.email?.[0]
+                      )?.toUpperCase()}
+                    </AvatarFallback>
                   </Avatar>
-                  <Button asChild>
-                    <Link to={`user/${user.data.id}`}>{user.data.email}</Link>
+
+                  <Link
+                    to={`user/${user.data.id}`}
+                    className="flex items-center gap-2 text-xl font-medium text-white transition-all duration-200 hover:text-yellow-300"
+                  >
+                    <span className="truncate">
+                      {user.data.firstName || user.data.lastName
+                        ? `${user.data.firstName || ""} ${
+                            user.data.lastName || ""
+                          }`
+                        : user.data.email}
+                    </span>
+                  </Link>
+                </div>
+                <div className="grid w-full gap-1">
+                  <Button variant={"revanta"}>Your order</Button>
+                  <Button variant={"revanta"} onClick={logout}>
+                    Log Out
                   </Button>
-                  <Button onClick={logout}>Log Out</Button>
                 </div>
-              ) : (
-                <div>
-                  {" "}
-                  {auth.map((item) => (
-                    <Button
-                      className="w-full"
-                      key={item.id}
-                      value={item.name}
-                      variant="revanta"
-                    >
-                      {" "}
-                      <Link to={item.href}>{item.name}</Link>
-                    </Button>
-                  ))}
-                </div>
-              )}
-            </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="flex flex-col items-center justify-center w-full gap-2"
+              >
+                {auth.map((item) => (
+                  <Button
+                    className="w-full"
+                    key={item.id}
+                    value={item.name}
+                    variant="revanta"
+                  >
+                    <Link to={item.href}>{item.name}</Link>
+                  </Button>
+                ))}
+              </motion.div>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
 
@@ -110,18 +138,58 @@ const Navigate = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
-          className="absolute top-[4.5rem] w-[90%] bg-zinc-800/70 shadow-lg backdrop-blur-md rounded-lg flex flex-col items-center p-4 md:hidden"
+          className="absolute top-[4.5rem] w-auto bg-zinc-800/70 shadow-lg backdrop-blur-sm rounded-lg flex flex-col items-center p-4 md:hidden"
         >
-          {auth.map((item) => (
-            <Link
-              key={item.name}
-              to={item.href}
-              className="w-full p-2 text-center text-white transition rounded-lg font-montserrat hover:bg-zinc-700"
-              onClick={() => setIsOpen(false)}
-            >
-              {item.name}
-            </Link>
-          ))}
+          {user ? (
+            <div className="grid items-center justify-center grid-cols-1 gap-1">
+              <div className="flex items-center justify-center gap-1">
+                <Avatar>
+                  <AvatarImage
+                    src={`${user.data.image}`}
+                    alt={`${user.data.email}`}
+                  />
+                  <AvatarFallback className="bg-zinc-500/50">
+                    {" "}
+                    {(
+                      user?.data?.firstName?.[0] || user?.data?.email?.[0]
+                    )?.toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <Link
+                  to={`user/${user.data.id}`}
+                  className="flex items-center gap-2 text-xl font-medium text-white transition-all duration-200 hover:text-yellow-300"
+                >
+                  <span className="truncate">
+                    {user.data.firstName || user.data.lastName
+                      ? `${user.data.firstName || ""} ${
+                          user.data.lastName || ""
+                        }`
+                      : user.data.email}
+                  </span>
+                </Link>
+              </div>
+              <div className="grid gap-1 ">
+                <Button variant={"revanta"}>Your order</Button>
+                <Button variant={"revanta"} onClick={logout}>
+                  Log Out
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div>
+              {auth.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className="w-full p-2 text-center text-white transition rounded-lg font-montserrat hover:bg-zinc-700"
+                  onClick={() => setIsOpen(false)}
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </div>
+          )}
+
           <DropdownMenuSeparator className="w-full bg-white" />
           {navigation.map((item) => (
             <Link

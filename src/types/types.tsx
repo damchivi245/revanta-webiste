@@ -1,17 +1,76 @@
-export type User = {
+export interface User {
   data: {
     id: string;
     email: string;
     password: string;
-    firstName: string;
-    lastName: string;
-    image: string;
-    address: string;
-    phone: string;
     accessToken: string;
     role: string;
+    image?: string;
+    firstName?: string;
+    lastName?: string;
+    address?: string;
+    phone?: string;
   };
-  statusCode: number;
-  success: boolean;
-  message: string;
+  pagination?: Pagination;
+  success?: boolean;
+  message?: string;
+}
+
+export type Pagination = {
+  limit: number;
+  page: number;
+  total: number;
+  totalPages: number;
 };
+
+export interface UpdateUser {
+  firstName?: string | undefined;
+  lastName?: string | undefined;
+  address?: string | undefined;
+  phone?: string | undefined;
+}
+
+enum CarStatus {
+  "AVAILABLE",
+  "RENTED",
+  "MAINTENANCE",
+}
+export interface Car {
+  data: {
+    id: string;
+    name: string;
+    brand: string;
+    model: string;
+    year: string;
+    price: number;
+    seats: number;
+    transmission: string;
+    fuel: string;
+    consumption: string;
+    content?: string;
+    // image?: string;
+    // model3d?: string;
+    status: CarStatus;
+    colors: string[];
+  };
+  pagination?: Pagination;
+  success?: boolean;
+  message?: string;
+}
+
+export interface UpdateCar {
+  name: string;
+  brand: string;
+  model: string;
+  year: string;
+  price: number;
+  seats: number;
+  transmission: string;
+  fuel: string;
+  consumption: string;
+  content?: string;
+  image?: string;
+  model3d?: string;
+  status: CarStatus;
+  colors: string[];
+}

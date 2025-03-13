@@ -1,17 +1,21 @@
-import { BackgroundBeamsWithCollision } from "@/components/backgrounds/background-beams-with-collision";
+// import { BackgroundBeamsWithCollision } from "@/components/backgrounds/background-beams-with-collision";
+import ProductFilter from "@/components/product/product-filter";
 import ProductList from "@/components/product/product-list";
 
 const ProductsPage = () => {
   return (
-    <BackgroundBeamsWithCollision className="size-full bg-black min-h-screen">
-      <div className="container mx-auto p-4">
-        <div className="grid grid-cols-1 mt-28 gap-8">
-          <div className="p-6">
+    <div className="size-full bg-black">
+      <div className="pt-28 container mx-auto">
+        <div className="grid grid-cols-5 gap-3 ">
+          <div className=" col-span-1 size-full">
+            <ProductFilter />
+          </div>
+          <div className=" col-span-4 size-full">
             <ProductList />
           </div>
         </div>
       </div>
-    </BackgroundBeamsWithCollision>
+    </div>
   );
 };
 

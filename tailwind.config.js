@@ -19,12 +19,14 @@ module.exports = {
         aurora: "aurora 60s linear infinite",
         "caret-blink": "caret-blink 1.25s ease-out infinite",
         "meteor-effect": "meteor 5s linear infinite",
+        shimmer: "shimmer 2s linear infinite",
       },
       keyframes: {
         "caret-blink": {
           "0%,70%,100%": { opacity: "1" },
           "20%,50%": { opacity: "0" },
         },
+
         aurora: {
           from: {
             backgroundPosition: "50% 50%, 50% 50%",
@@ -39,6 +41,14 @@ module.exports = {
           "100%": {
             transform: "rotate(215deg) translateX(-500px)",
             opacity: "0",
+          },
+        },
+        shimmer: {
+          from: {
+            backgroundPosition: "0 0",
+          },
+          to: {
+            backgroundPosition: "-200% 0",
           },
         },
       },
