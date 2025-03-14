@@ -13,6 +13,7 @@ import { TimePicker } from "@/components/TimePicker";
 import { BackgroundBeamsWithCollision } from "@/components/backgrounds/background-beams-with-collision";
 import RentalInstructions from "@/components/RentalInstructions";
 import SelectLocation from "@/components/SelectLocation";
+import { SearchIcon } from "lucide-react";
 
 const slogans = [
   "Revanta – Where Luxury Meets the Road.",
@@ -58,12 +59,12 @@ const HomePage = () => {
 
         <div className="w-full px-8 md:px-24 h-fit">
           <div className="text-white size-full backdrop-blur-sm rounded-xl bg-[#1e1e1e]/70 ">
-            <div className="flex flex-col items-center justify-between w-full h-full gap-5 p-5 md:flex-row">
-              <div className="flex flex-col items-start justify-between w-full gap-1">
+            <div className="grid grid-cols-7 items-center justify-between w-full h-full gap-5 p-5 md:flex-row">
+              <div className="flex flex-col col-span-3 items-start justify-between w-full gap-1">
                 <h1 className="text-sm font-montserrat ">Pick up location</h1>
                 <SelectLocation />
               </div>
-              <div className="w-full">
+              <div className="w-full col-span-3">
                 <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
                   <div className="flex flex-col items-start justify-between w-full gap-1">
                     <h1 className="text-sm font-montserrat">Car rental date</h1>
@@ -75,9 +76,9 @@ const HomePage = () => {
                   </div>
                 </div>
               </div>
-              <div className="h-16 w-72">
+              <div className="size-full col-span-1 rounded-full">
                 <Button className="size-full" variant={"revanta"}>
-                  Find Car
+                  <SearchIcon className="size-6" />
                 </Button>
               </div>
             </div>

@@ -48,8 +48,8 @@ export interface Car {
     fuel: string;
     consumption: string;
     content?: string;
-    // image?: string;
-    // model3d?: string;
+    image?: string;
+    model3d?: string;
     status: CarStatus;
     colors: string[];
   };

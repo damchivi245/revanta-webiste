@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-// import { BackgroundGradient } from "../backgrounds/background-gradient";
 import { Link } from "react-router-dom";
 import { useCarStore } from "@/store/carStore";
 import { useEffect, useState } from "react";
@@ -7,34 +6,59 @@ import { Input } from "../ui/input";
 import { XIcon } from "lucide-react";
 import PaginationComponent from "../PaginationComponent";
 import { SkeletonList } from "../SkeletonComponent";
+import { Filters } from "@/pages/Product/ProductsPage";
+import { CardBody, CardContainer, CardItem } from "../ui/3d-card";
 
-const ProductList = () => {
+interface ProductListProps {
+  filters: Filters;
+}
+
+const ProductList = ({ filters }: ProductListProps) => {
   const { car, loading, error, fetchCar } = useCarStore();
   const [search, setSearch] = useState("");
-  const [filters, setFilters] = useState({
+  const [query, setQuery] = useState({
     page: 1,
-    limit: 2,
+    limit: 9,
+    name: "",
+    brand: "",
+    model: "",
   });
+
+  // Cập nhật query khi filters thay đổi
   useEffect(() => {
-    fetchCar(filters);
-  }, [filters, fetchCar]);
+    setQuery((prev) => ({
+      ...prev,
+      brand: filters.selectedBrand || "",
+      model: filters.selectedModel || "",
+    }));
+  }, [filters]);
+
+  // Fetch data khi query thay đổi
+  useEffect(() => {
+    const queryParams = new URLSearchParams(
+      Object.entries(query)
+        .filter(([, value]) => value !== "")
+        .map(([key, value]) => [key, String(value)])
+    ).toString();
+
+    fetchCar(queryParams);
+  }, [query, fetchCar]);
 
   const handleSearch = () => {
-    setFilters((prev) => ({ ...prev, name: search, page: 1 }));
+    setQuery((prev) => ({ ...prev, name: search, page: 1 }));
   };
 
-  // Xử lý xóa input
   const handleClear = () => {
     setSearch("");
-    setFilters((prev) => ({ ...prev, name: "", page: 1 }));
+    setQuery((prev) => ({ ...prev, name: "", page: 1 }));
   };
 
   return (
     <div className="size-full">
       {error && <div className="text-red-500 h-screen">Error: {error}</div>}
       <div className="flex flex-col items-center space-y-3">
-        {/* Danh sách xe */}
-        <div className=" flex gap-2 w-full items-center justify-center font-montserrat">
+        {/* Tìm kiếm */}
+        <div className="flex gap-2 w-full items-center justify-center">
           <div className="relative w-full">
             <Input
               type="text"
@@ -52,56 +76,70 @@ const ProductList = () => {
               </button>
             )}
           </div>
-
           <Button variant={"revanta"} onClick={handleSearch}>
             Search
           </Button>
         </div>
-        {/* Trạng thái loading */}
+
+        {/* Loading */}
         {loading ? (
-          <div className="size-full">
+          <div className="w-full  h-screen">
             <SkeletonList count={6} />
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 w-full">
-            {Array.isArray(car?.data) ? (
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 w-full h-full items-center justify-center">
+            {Array.isArray(car?.data) && car?.data.length > 0 ? (
               car.data.map((product) => (
-                <div
+                <CardContainer
                   key={product.id}
-                  className="w-full p-2 rounded-md bg-zinc-800 space-y-2"
+                  className="w-full p-3 rounded-md bg-white/10 space-y-2 "
                 >
-                  <Link to={`/product/${product.id}`}>
-                    <img
-                      src={product.image || "/images/default-car.jpg"}
-                      alt={product.name}
-                      className="object-cover w-full rounded-md h-60"
-                    />
-                    <h3 className="text-xl text-white font-montserrat ">
-                      {product.name}
-                    </h3>
-                    <p className="font-medium text-yellow-400">
-                      ${new Intl.NumberFormat("en-US").format(product.price)}
-                      /day
-                    </p>
-                    <Button variant="revanta" className="w-full mt-3">
-                      Rent Now
-                    </Button>
-                  </Link>
-                </div>
+                  <CardBody className="size-full ">
+                    <CardItem translateZ="70">
+                      <img
+                        src={product.image || "/images/default-car.jpg"}
+                        alt={product.name}
+                        className="object-cover w-full rounded-md h-60"
+                      />
+                    </CardItem>
+
+                    <div>
+                      <CardItem translateZ="50">
+                        <h3 className="text-xl text-white font-montserrat">
+                          {product.name}
+                        </h3>
+                      </CardItem>
+                      <CardItem translateZ="50">
+                        <p className="font-medium text-yellow-400">
+                          $
+                          {new Intl.NumberFormat("en-US").format(product.price)}
+                          /day
+                        </p>
+                      </CardItem>
+                    </div>
+                    <CardItem translateZ="50" className="w-full">
+                      <Button asChild variant="revanta" className="w-full mt-3">
+                        <Link to={`/product/${product.id}`}>Rent Now</Link>
+                      </Button>
+                    </CardItem>
+                  </CardBody>
+                </CardContainer>
               ))
             ) : (
-              <p className="text-gray-400">No cars available</p>
+              <div className="col-span-full flex items-center justify-center h-[300px]">
+                <p className="text-5xl text-gray-400">No cars available</p>
+              </div>
             )}
           </div>
         )}
 
-        {/* Nút chuyển trang */}
-        <div className="flex gap-4 mt-4">
+        {/* Pagination */}
+        <div className="flex gap-4 mt-4 w-full">
           <PaginationComponent
-            currentPage={filters.page ?? 1}
+            currentPage={query.page ?? 1}
             totalPages={car?.pagination?.totalPages ?? 0}
             onPageChange={(newPage) =>
-              setFilters((prev) => ({ ...prev, page: newPage }))
+              setQuery((prev) => ({ ...prev, page: newPage }))
             }
           />
         </div>

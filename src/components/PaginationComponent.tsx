@@ -32,7 +32,7 @@ const PaginationComponent = ({
   };
 
   return (
-    <div className="text-white">
+    <div className="text-white w-full">
       <Pagination>
         <PaginationContent className="flex justify-between items-center gap-2">
           {/* Nút Previous */}

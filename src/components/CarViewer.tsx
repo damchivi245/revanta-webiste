@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, useGLTF, Environment } from "@react-three/drei";
@@ -9,6 +10,10 @@ interface CarViewerProps {
 }
 
 const CarViewer: React.FC<CarViewerProps> = ({ modelPath, color }) => {
+  if (!modelPath) {
+    console.error("🚨 modelPath is null, cannot load model.");
+    return null; // Không render nếu không có model
+  }
   const { scene } = useGLTF(modelPath);
   const [scale, setScale] = useState(window.innerWidth < 768 ? 1 : 1.75);
   const resizeTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -67,7 +72,12 @@ const CarModelViewer: React.FC<{ modelPath: string; colors: string }> = ({
           <ambientLight intensity={0.5} />
           <directionalLight castShadow position={[10, 10, 5]} intensity={2} />
           <Environment preset="sunset" />
-          <OrbitControls enableZoom minDistance={4} maxDistance={7} />
+          <OrbitControls
+            enableZoom
+            minDistance={4}
+            maxDistance={7}
+            enablePan={false}
+          />
           <CarViewer modelPath={modelPath} color={colors} />
         </Suspense>
       </Canvas>

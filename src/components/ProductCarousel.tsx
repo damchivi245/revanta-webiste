@@ -28,8 +28,8 @@ export function CarouselSize() {
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
+      <CarouselPrevious className="md:block hidden" />
+      <CarouselNext className="md:block hidden" />
     </Carousel>
   );
 }

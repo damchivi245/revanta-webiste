@@ -13,7 +13,6 @@ interface ChildProps {
 }
 
 const Payment = ({ id }: ChildProps) => {
-  console.log("id: ", id);
   return (
     <div className="p-2 rounded-md size-full bg-zinc-700/70 backdrop-blur-md">
       <div className="flex flex-col items-start justify-start gap-2 size-full font-montserrat">

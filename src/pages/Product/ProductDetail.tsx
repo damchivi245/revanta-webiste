@@ -1,88 +1,165 @@
-import { BackgroundBeamsWithCollision } from "@/components/backgrounds/background-beams-with-collision";
+// import { BackgroundBeamsWithCollision } from "@/components/backgrounds/background-beams-with-collision";
 import CarModelViewer from "@/components/CarViewer";
+import FullPageLoader from "@/components/FullPageLoader";
 import Payment from "@/components/Payment";
 import { CarouselSize } from "@/components/ProductCarousel";
-import { ArmchairIcon, CarIcon, DropletsIcon, FuelIcon } from "lucide-react";
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useCarStore } from "@/store/carStore";
+import {
+  ArmchairIcon,
+  Camera,
+  CarIcon,
+  DropletsIcon,
+  FuelIcon,
+  MapPin,
+  Radar,
+  Snowflake,
+  Sun,
+  TypeIcon,
+  Users,
+  Wifi,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
-const products = [
+const amenitiesList = [
   {
-    id: 1,
-    name: "Lamborghini Huracán",
-    price: "200,000$",
-    model: "/models3d/mercedes-maybach_vision_6.glb",
-    colors: ["default", "white", "black"],
+    name: "GPS Navigation",
+    icon: <MapPin className="w-5 h-5 text-yellow-500" />,
   },
   {
-    id: 2,
-    name: "Ferrari 488",
-    price: "250,000$",
-    model: "/models3d/mercedes-maybach_vision_6.glb",
-    colors: ["default", "red", "black"],
+    name: "Leather Seats",
+    icon: <Users className="w-5 h-5 text-yellow-500" />,
+  },
+  {
+    name: "Bluetooth Connectivity",
+    icon: <Wifi className="w-5 h-5 text-yellow-500" />,
+  },
+  {
+    name: "Backup Camera",
+    icon: <Camera className="w-5 h-5 text-yellow-500" />,
+  },
+  { name: "Sunroof", icon: <Sun className="w-5 h-5 text-yellow-500" /> },
+  {
+    name: "Heated Seats",
+    icon: <Snowflake className="w-5 h-5 text-yellow-500" />,
+  },
+  {
+    name: "Blind Spot Monitoring",
+    icon: <Radar className="w-5 h-5 text-yellow-500" />,
   },
 ];
 
 function ProductDetailPage() {
   const { id } = useParams(); // Lấy id từ URL
+  const { car, fetchCarDetail, loading, error } = useCarStore();
+  const navigate = useNavigate();
+  const [hoveredAmenity, setHoveredAmenity] = useState<string | null>(null);
+  const [selectedColor, setSelectedColor] = useState("default");
 
-  const product = products.find((p) => p.id === Number(id));
-  const [selectedColor, setSelectedColor] = useState(
-    product ? product.colors[0] : ""
-  );
-  if (!product) return <h1>Product not found</h1>;
+  useEffect(() => {
+    if (id) {
+      fetchCarDetail(id);
+    }
+  }, [id, fetchCarDetail]);
+
+  useEffect(() => {
+    if (car?.data?.id && id && car.data.id !== id) {
+      navigate(`/product/${car.data.id}`, { replace: false });
+    }
+  }, [car, id, navigate, fetchCarDetail]);
+
+  if (loading) return <FullPageLoader />;
+  if (error) return <h1>Error: {error}</h1>;
+  if (!car) return <h1>Car not found</h1>;
 
   return (
-    <BackgroundBeamsWithCollision className="text-white bg-black size-full">
-      <div className="container mx-8 md:mx-auto mt-28 size-full">
+    <div className="text-white bg-black size-full">
+      <div className="container mx-auto pt-28 size-full">
         <div className="flex flex-col items-center justify-center gap-3 ">
           <div className="relative w-full h-[80vh] md:h-screen border rounded-md border-zinc-400 bg-white/20 backdrop-blur-sm">
             <div className="absolute z-10 bg-transparent inset-3 size-fit">
               <div className="flex flex-col items-start justify-start gap-1">
-                <h1 className="p-2 text-base font-bold text-yellow-500 rounded-md md:text-3xl font-montserrat bg-black/60 backdrop-blur-sm">
-                  {product.name}
+                <h1 className="p-2 text-base font-bold text-yellow-500 rounded-md md:text-5xl font-montserrat bg-black/60 backdrop-blur-sm">
+                  {car.data.name}
                 </h1>
                 <p className="p-2 font-bold rounded-md text-md font-montserrat bg-black/60 backdrop-blur-sm">
-                  Price
+                  ${new Intl.NumberFormat("en-US").format(car.data.price)}
+                  /day
                 </p>
               </div>
             </div>
-            <div className="absolute bottom-0 z-10 flex items-center justify-between w-full gap-2">
+
+            <div className="absolute bottom-0 z-10 md:flex items-center justify-between w-full gap-2 hidden ">
               <div className="p-2 rounded-md backdrop-blur-sm bg-black/60">
                 <div className="flex flex-col gap-1">
                   <p className="text-xl text-yellow-500">Characteristic:</p>
                   <div className="flex gap-2">
                     <div className="flex gap-1 p-2 rounded-md bg-zinc-950">
                       <span>
+                        <TypeIcon />
+                      </span>
+                      <p>Type: {car.data.model}</p>
+                    </div>
+                    <div className="flex gap-1 p-2 rounded-md bg-zinc-950">
+                      <span>
                         <ArmchairIcon />
                       </span>
-                      <p>Seats:</p>
+                      <p>Seats: {car.data.seats}</p>
                     </div>
                     <div className="flex gap-1 p-2 rounded-md bg-zinc-950">
                       <span>
                         <CarIcon />
                       </span>
-                      <p>Transmission:</p>
+                      <p>Transmission: {car.data.transmission}</p>
                     </div>
                     <div className="flex gap-1 p-2 rounded-md bg-zinc-950">
                       <span>
                         <FuelIcon />
                       </span>
-                      <p>Fuel:</p>
+                      <p>Fuel: {car.data.fuel}</p>
                     </div>
                     <div className="flex gap-1 p-2 rounded-md bg-zinc-950">
                       <span>
                         <DropletsIcon />
                       </span>
-                      <p>Consumption:</p>
+                      <p>Consumption: {car.data.consumption}</p>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* 🏁 Chọn màu xe */}
-              <div className="absolute z-10 flex items-center justify-center w-full gap-2 bottom-4">
-                {product.colors.map((color) => (
+            <div className="absolute bottom-44 right-0 p-1 rounded-md backdrop-blur-sm bg-black/60 z-10 hidden md:block">
+              <div className="flex flex-col gap-2">
+                {/* <h1 className="text-xl text-yellow-500">Amenities </h1> */}
+                <div className="size-full">
+                  {amenitiesList.map((item, index) => {
+                    return (
+                      <div
+                        key={index}
+                        className="relative flex flex-col items-center group size-fit"
+                        onMouseEnter={() => setHoveredAmenity(item.name)}
+                        onMouseLeave={() => setHoveredAmenity(null)}
+                      >
+                        <div className="w-6 h-6 text-yellow-500 cursor-pointer transition-transform duration-200 group-hover:scale-110">
+                          {item.icon}
+                        </div>
+
+                        {hoveredAmenity === item.name && (
+                          <div className="absolute right-full z-30 mb-2 px-2 py-1 bg-black/80 text-white text-xs rounded-md whitespace-nowrap">
+                            {item.name}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+            {/* 🏁 Chọn màu xe */}
+            <div className="absolute z-10 flex gap-2 right-16 bottom-4 size-fit bg-black/60 backdrop-blur-sm p-3 rounded-full">
+              {car?.data?.colors?.length > 0 &&
+                car.data.colors.map((color) => (
                   <button
                     key={color}
                     style={{
@@ -96,38 +173,101 @@ function ProductDetailPage() {
                     onClick={() => setSelectedColor(color)}
                   />
                 ))}
-              </div>
-
-              <div className="p-2 rounded-md backdrop-blur-sm bg-black/60">
-                <div className="flex flex-col gap-2">
-                  <h1 className="text-xl text-yellow-500">Amenities </h1>
-                  <div>1</div>
-                </div>
-              </div>
             </div>
-
             <div className="absolute z-10 p-2 rounded-md right-3 top-3 size-fit backdrop-blur-sm bg-black/60">
-              <h1>Year</h1>
+              <h1 className="font-montserrat text-xl">{car.data.year}</h1>
             </div>
-            <CarModelViewer modelPath={product.model} colors={selectedColor} />
+            {car?.data?.model3d ? (
+              <CarModelViewer
+                modelPath={car.data.model3d}
+                colors={selectedColor}
+              />
+            ) : (
+              <div className="text-center text-white size-full">
+                <img
+                  src={car.data.image || "/images/default-car.jpg"}
+                  alt={car.data.name}
+                  className="object-cover h-full w-full rounded-md"
+                />
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 gap-2 p-2 md:p-0 md:grid-cols-3 size-full">
             <div className="col-span-2">
               <h1 className="text-3xl text-yellow-500 font-cinzel">Overview</h1>
+              <div className="p-2 rounded-md backdrop-blur-sm bg-zinc-800/60 text-sm md:hidden block">
+                <div className="flex flex-col gap-1">
+                  <p className="text-xl text-yellow-500">Characteristic:</p>
+                  <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-1 rounded-md bg-zinc-950 w-full justify-between items-center text-base p-2">
+                      <div className="flex items-center justify-center gap-1">
+                        <span>
+                          <TypeIcon />
+                        </span>
+                        <p> {car.data.model}</p>
+                      </div>
+                      <div className="flex items-center justify-center gap-1">
+                        <span>
+                          <ArmchairIcon />
+                        </span>
+                        <p> {car.data.seats}</p>
+                      </div>
+                      <div className="flex items-center justify-center gap-1">
+                        <span>
+                          <CarIcon />
+                        </span>
+                        <p> {car.data.transmission}</p>
+                      </div>
+                      <div className="flex items-center justify-center gap-1">
+                        <span>
+                          <FuelIcon />
+                        </span>
+                        <p> {car.data.fuel}</p>
+                      </div>
+                      <div className="flex items-center justify-center gap-1">
+                        <span>
+                          <DropletsIcon />
+                        </span>
+                        <p> {car.data.consumption}</p>
+                      </div>
+                    </div>
+                    <div className="size-full">
+                      {amenitiesList.map((item, index) => {
+                        return (
+                          <div
+                            key={index}
+                            className="relative flex flex-wrap items-center group gap-1"
+                            onMouseEnter={() => setHoveredAmenity(item.name)}
+                            onMouseLeave={() => setHoveredAmenity(null)}
+                          >
+                            <div className="w-6 h-6 text-yellow-500 cursor-pointer transition-transform duration-200 group-hover:scale-110">
+                              {item.icon}
+                            </div>
+
+                            <div className=" p-2 bg-black/80 text-white text-sm rounded-md flex items-center mb-1">
+                              {item.name}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
               <p className="font-montserrat ">Overview</p>
             </div>
             <div className="col-span-1 size-full">
               {id && <Payment id={id} />}
             </div>
           </div>
-          <div className="flex flex-col w-full gap-2 p-8">
+          <div className="flex flex-col w-full gap-2 p-4">
             <h1 className="text-3xl font-montserrat">Similar vehicles</h1>
             <CarouselSize />
           </div>
         </div>
       </div>
-    </BackgroundBeamsWithCollision>
+    </div>
   );
 }
 

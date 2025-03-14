@@ -9,7 +9,8 @@ interface CarState {
   error: string | null;
 
   setCar: (carData: Car | null) => void;
-  fetchCar: (filters?: Record<string, any>) => Promise<void>;
+  fetchCar: (params?: string | undefined) => Promise<void>;
+  fetchCarDetail: (id: string) => Promise<void>;
   createCar: (carData: Car) => Promise<void>;
   updateCar: (id: string, carUpdateData: UpdateCar) => Promise<void>;
   updateCarImage: (id: string, file: File) => Promise<void>;
@@ -25,12 +26,12 @@ export const useCarStore = create<CarState>((set) => ({
     set({ car: carData });
   },
 
-  fetchCar: async (filters = {}) => {
+  fetchCar: async (params?: string) => {
     set({ loading: true });
     try {
-      const queryParams = new URLSearchParams(filters).toString();
-      const res = await api.get(`/cars?${queryParams}`);
-      console.log("Check res", res.data);
+      const queryString = params ? new URLSearchParams(params).toString() : "";
+      const res = await api.get(`/cars?${queryString}`);
+
       set({ car: res.data });
     } catch (error: any) {
       set({ error: error.response?.data?.message });
@@ -38,6 +39,20 @@ export const useCarStore = create<CarState>((set) => ({
       set({ loading: false });
     }
   },
+
+  fetchCarDetail: async (id: string) => {
+    set({ loading: true });
+    try {
+      const res = await api.get(`/cars/${id}`);
+
+      set({ car: res.data });
+    } catch (error: any) {
+      set({ error: error.response?.data?.message });
+    } finally {
+      set({ loading: false });
+    }
+  },
+
   createCar: async (carData) => {
     set({ loading: true });
     try {
