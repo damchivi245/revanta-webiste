@@ -62,7 +62,7 @@ const CarModelViewer: React.FC<{ modelPath: string; colors: string }> = ({
   colors,
 }) => {
   return (
-    <div className="flex flex-col items-center size-full">
+    <div className="flex flex-col items-center size-full bg-transparent backdrop-blur-sm">
       <Canvas
         shadows
         camera={{ position: [0, 2, 7], fov: 50 }}

@@ -92,7 +92,7 @@ const ProductList = ({ filters }: ProductListProps) => {
               car.data.map((product) => (
                 <CardContainer
                   key={product.id}
-                  className="w-full p-3 rounded-md bg-white/10 space-y-2 "
+                  className="w-full p-3 rounded-md bg-transparent border border-yellow-500 "
                 >
                   <CardBody className="size-full ">
                     <CardItem translateZ="70">
@@ -103,17 +103,21 @@ const ProductList = ({ filters }: ProductListProps) => {
                       />
                     </CardItem>
 
-                    <div>
+                    <div className="mt-2 space-y-1">
                       <CardItem translateZ="50">
                         <h3 className="text-xl text-white font-montserrat">
                           {product.name}
                         </h3>
                       </CardItem>
                       <CardItem translateZ="50">
-                        <p className="font-medium text-yellow-400">
-                          $
-                          {new Intl.NumberFormat("en-US").format(product.price)}
-                          /day
+                        <p className="font-thin text-yellow-400 ">
+                          <span className="border-yellow-500/60 border px-1 rounded-lg">
+                            $
+                            {new Intl.NumberFormat("en-US").format(
+                              product.price
+                            )}
+                          </span>
+                          {""} / day
                         </p>
                       </CardItem>
                     </div>

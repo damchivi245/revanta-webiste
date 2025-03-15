@@ -58,13 +58,13 @@ const HomePage = () => {
         </div>
 
         <div className="w-full px-8 md:px-24 h-fit">
-          <div className="text-white size-full backdrop-blur-sm rounded-xl bg-[#1e1e1e]/70 ">
-            <div className="grid grid-cols-7 items-center justify-between w-full h-full gap-5 p-5 md:flex-row">
-              <div className="flex flex-col col-span-3 items-start justify-between w-full gap-1">
+          <div className="text-white size-full backdrop-blur-sm rounded-xl bg-transparent border border-yellow-500 ">
+            <div className="grid grid-cols-1 md:grid-cols-8 items-center justify-between w-full h-full gap-5 p-5 ">
+              <div className="flex flex-col col-span-full md:col-span-4 items-start justify-between w-full gap-1">
                 <h1 className="text-sm font-montserrat ">Pick up location</h1>
                 <SelectLocation />
               </div>
-              <div className="w-full col-span-3">
+              <div className="w-full col-span-full md:col-span-3">
                 <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
                   <div className="flex flex-col items-start justify-between w-full gap-1">
                     <h1 className="text-sm font-montserrat">Car rental date</h1>
@@ -76,7 +76,7 @@ const HomePage = () => {
                   </div>
                 </div>
               </div>
-              <div className="size-full col-span-1 rounded-full">
+              <div className="size-full col-span-full md:col-span-1 rounded-full text-center">
                 <Button className="size-full" variant={"revanta"}>
                   <SearchIcon className="size-6" />
                 </Button>

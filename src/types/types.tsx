@@ -74,3 +74,10 @@ export interface UpdateCar {
   status: CarStatus;
   colors: string[];
 }
+
+export interface Booking {
+  carId: string;
+  userId: string;
+  startDate: Date;
+  endDate: Date;
+}

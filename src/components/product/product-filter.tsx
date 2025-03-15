@@ -25,7 +25,7 @@ const ProductFilter = ({
   setFilters: React.Dispatch<React.SetStateAction<Filters>>;
 }) => {
   return (
-    <div className="bg-zinc-500/20  backdrop-blur-sm w-full p-3 rounded-lg shadow-md font-montserrat border border-zinc-500 text-white relative space-y-10 overflow-hidden">
+    <div className="bg-transparent  backdrop-blur-sm w-full p-3 rounded-lg shadow-md font-montserrat border border-yellow-500 text-white relative space-y-10 overflow-hidden">
       {/* Header */}
       <div className="bg-yellow-500 p-2 rounded-t-lg absolute top-0 left-0 w-full">
         <h1 className="text-xl text-black font-bold text-center">Filter</h1>

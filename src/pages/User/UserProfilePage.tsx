@@ -120,8 +120,8 @@ const UserProfilePage = () => {
   return (
     <BackgroundLines className="text-white bg-black pt-28 size-full font-montserrat">
       <div className="mx-2 md:mx-20 my-0 space-y-2">
-        <div className="relative p-6 overflow-hidden rounded-md bg-zinc-600/60 backdrop-blur-sm border border-zinc-500">
-          <div className="absolute top-0 left-0 z-0 w-full h-[15%] md:h-[30%] bg-black">
+        <div className="relative p-6 overflow-hidden rounded-md bg-black/10 backdrop-blur-sm border border-yellow-500">
+          <div className="absolute top-0 left-0 z-0 w-full h-[15%] md:h-[30%] bg-zinc-900">
             <div className="flex flex-wrap items-center justify-center h-full px-2 text-6xl text-white gap-2  md:text-8xl font-cinzel bg-clip-text">
               <p>Revanta</p>
               <p>Member</p>
@@ -135,7 +135,7 @@ const UserProfilePage = () => {
                   alt={user.data.email}
                   className="object-cover size-full"
                 />
-                <AvatarFallback className="flex items-center justify-center text-6xl bg-zinc-500/50 size-full">
+                <AvatarFallback className="flex items-center justify-center text-3xl md:text-6xl bg-zinc-500/50 size-full">
                   {(
                     user?.data?.firstName?.[0] || user?.data?.email?.[0]
                   )?.toUpperCase()}
@@ -159,7 +159,7 @@ const UserProfilePage = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
               <div className="col-span-2 w-full">
                 <form className="space-y-2" action="" onSubmit={handleSubmit}>
-                  <div className="text-3xl font-bold font-montserrat">
+                  <div className=" text-xl md:text-3xl font-bold font-montserrat">
                     {editMode ? (
                       <div className="flex items-center gap-1">
                         <Input
@@ -168,7 +168,7 @@ const UserProfilePage = () => {
                           placeholder="First name"
                           onChange={handleFormChange}
                           onBlur={() => setEditMode(false)} // Mất focus thì thoát chế độ chỉnh sửa
-                          className="text-3xl font-bold"
+                          className=" text-xl md:text-3xl font-bold"
                         />
                         <Input
                           name="firstName"
@@ -176,7 +176,7 @@ const UserProfilePage = () => {
                           placeholder="First name"
                           onChange={handleFormChange}
                           onBlur={() => setEditMode(false)} // Mất focus thì thoát chế độ chỉnh sửa
-                          className="text-3xl font-bold"
+                          className=" text-xl md:text-3xl font-bold"
                         />
                       </div>
                     ) : (

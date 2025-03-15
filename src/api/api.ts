@@ -36,14 +36,17 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    console.log("Check originalRequest:", originalRequest);
+    console.log("Check error:", error);
 
-    if (error.response?.status === 403 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
           .then((token) => {
             originalRequest.headers.Authorization = `Bearer ${token}`;
+
             return api(originalRequest);
           })
           .catch((err) => {
@@ -55,14 +58,19 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const res = await axios.get<{ accessToken: string }>(
+        const res = await axios.post<{ accessToken: string }>(
           `${import.meta.env.VITE_API_BASE_URL}/refresh-token`,
-          { withCredentials: true }
+          null,
+          {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
         );
-        console.log("Check res", res);
 
         const newToken = res.data.accessToken;
-        console.log("Check newToken", newToken);
+
         useAuthStore.getState().setAccessToken(newToken); // Lưu token mới vào Zustand
 
         processQueue(null, newToken);
@@ -72,7 +80,7 @@ api.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
         useAuthStore.getState().logout();
-        window.location.href = "/login"; // Chuyển hướng nếu refresh token hết hạn
+        // window.location.href = "/login"; // Chuyển hướng nếu refresh token hết hạn
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

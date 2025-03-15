@@ -1,17 +1,31 @@
 import { BackgroundBeams } from "@/components/backgrounds/background-beams";
 import { Input } from "@/components/ui/input";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useState } from "react";
 import { DatePickerWithRange } from "@/components/DateRangePicker";
 
 import { Button } from "@/components/ui/button";
+import { DateRange } from "react-day-picker";
+import { addDays } from "date-fns";
+import { useAuthStore } from "@/store/authStore";
 
 const BookingPage = () => {
-  const { id } = useParams(); // Lấy id từ URL
-  console.log("id: ", id);
+  const [date, setDate] = useState<DateRange>({
+    from: new Date(),
+    to: addDays(new Date(), 1),
+  });
+  const { user, fetchUser } = useAuthStore();
 
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+  console.log("user", user, fetchUser);
+  const [name, setName] = useState(() => {
+    const firstName = user?.data.firstName || "";
+    const lastName = user?.data.lastName || "";
+    return `${firstName} ${lastName}`.trim();
+  });
+  const [phone, setPhone] = useState(() => {
+    const phone = user?.data.phone || "";
+    return phone.trim();
+  });
 
   return (
     <div className="min-h-screen pb-2 text-white bg-black">
@@ -48,7 +62,7 @@ const BookingPage = () => {
                   <p className="text-sm font-medium text-gray-400">
                     Rental period
                   </p>
-                  <DatePickerWithRange />
+                  <DatePickerWithRange sendDate={setDate} />
                 </div>
                 <div className="flex flex-col gap-2">
                   <p className="text-sm font-medium text-gray-400">
@@ -79,7 +93,7 @@ const BookingPage = () => {
                   variant={"revanta"}
                   asChild
                 >
-                  <Link to={`/payment/${id}`}>Confirm</Link>
+                  <Link to={`/payment`}>Confirm</Link>
                 </Button>
               </div>
             </div>
