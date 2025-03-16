@@ -75,9 +75,32 @@ export interface UpdateCar {
   colors: string[];
 }
 
-export interface Booking {
+export interface CreateBooking {
   carId: string;
-  userId: string;
-  startDate: Date;
-  endDate: Date;
+  // userId: string;
+  pickUp: string;
+  startDate: string;
+  endDate: string;
+}
+
+export interface BookingData {
+  data: {
+    id: string;
+    userId: string;
+    user: User;
+    carId: string;
+    car: Car;
+    startDate: Date;
+    endDate: Date;
+    pickUp: string;
+    status: BookingStatus;
+  };
+  success?: boolean;
+  message?: string;
+}
+enum BookingStatus {
+  "PENDING",
+  "CONFIRMED",
+  "CANCELLED",
+  "COMPLETED",
 }

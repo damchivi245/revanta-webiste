@@ -43,8 +43,12 @@ const UserProfilePage = () => {
   }, [user]);
 
   const navigate = useNavigate();
-
   useEffect(() => {
+    if (!user?.data) {
+      navigate("/login", { replace: true });
+      return;
+    }
+
     if (user?.data?.id && id && user.data.id !== id) {
       navigate(`/user/${user.data.id}`, { replace: false });
     }

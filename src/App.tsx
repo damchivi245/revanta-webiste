@@ -9,7 +9,6 @@ import ForgotPasswordPage from "./pages/Auth/ForgotPasswordPage";
 import { Toaster } from "@/components/ui/sonner";
 import ProductsPage from "./pages/Product/ProductsPage";
 import ProductDetailPage from "./pages/Product/ProductDetail";
-import BookingPage from "./pages/Payment/BookingPage";
 import PaymentPage from "./pages/Payment/PaymentPage";
 import UserProfilePage from "./pages/User/UserProfilePage";
 
@@ -29,14 +28,13 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/product/:id" element={<ProductDetailPage />} />
-          <Route path="/booking" element={<BookingPage />} />
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/user/:id" element={<UserProfilePage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
-      <Toaster position="top-center" expand={false} richColors />
+      <Toaster position="bottom-right" expand={false} richColors />
     </Router>
   );
 }

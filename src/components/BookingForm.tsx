@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { RadioGroup } from "@radix-ui/react-radio-group";
 import { DatePickerWithRange } from "./DateRangePicker";
 import SelectLocation from "./SelectLocation";
@@ -6,9 +7,8 @@ import { RadioGroupItem } from "./ui/radio-group";
 import { Label } from "./ui/label";
 import { MapPinCheckIcon } from "lucide-react";
 import { Input } from "./ui/input";
-import { Link } from "react-router-dom";
-import { useMemo, useState } from "react";
-import { addDays, differenceInDays } from "date-fns";
+import { useEffect, useMemo, useState } from "react";
+import { differenceInDays } from "date-fns";
 import { DateRange } from "react-day-picker";
 import {
   Select,
@@ -17,36 +17,81 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-
-// import { useCarStore } from "@/store/carStore";
+import { useBookingStore } from "@/store/bookingStore";
+import { toast } from "sonner";
+import { useAuthStore } from "@/store/authStore";
 
 const locations = {
   "Ho Chi Minh": "258 Thanh Thai, District 10",
   "Ha Noi": "1 Dai Co Viet, Hai Ba Trung",
   "Da Nang": "45 Nguyen Van Linh, Hai Chau",
 };
-const BookingForm = () => {
+
+interface BookingFormProps {
+  carId: string;
+  carPrice: number;
+  onTotalChange: (total: number) => void;
+}
+
+const BookingForm: React.FC<BookingFormProps> = ({
+  carId,
+  carPrice,
+  onTotalChange,
+}) => {
+  const { user } = useAuthStore();
+  console.log("Check user", user);
   const [date, setDate] = useState<DateRange>({
-    from: new Date(),
-    to: addDays(new Date(), 1),
+    from: undefined,
+    to: undefined,
   });
   const [city, setCity] = useState<keyof typeof locations>("Ho Chi Minh");
   const [selectedOption, setSelectedOption] = useState("option-one");
   const [customAddress, setCustomAddress] = useState("");
+  const { createBooking, loading } = useBookingStore();
+
   const pickupLocation =
     selectedOption === "option-one" ? locations[city] : null;
   const deliveryAddress =
     selectedOption === "option-two" ? customAddress : null;
-  console.log("Pick-up Location:", pickupLocation);
-  console.log("Delivery Address:", deliveryAddress);
 
-  const pricePerDay = 2500000;
+  const handleBooking = async () => {
+    if (!user?.data) {
+      toast.warning("Please log in to make a booking!");
+      return;
+    }
+    if (!date.from || !date.to || date.from < new Date()) {
+      toast.warning("Invalid date range");
+      return;
+    }
+    if (selectedOption === "option-two" && !customAddress) {
+      toast.warning("Please enter a delivery address");
+      return;
+    }
+
+    try {
+      await createBooking({
+        carId: carId || "",
+        startDate: date.from.toISOString(),
+        endDate: date.to.toISOString(),
+        pickUp: pickupLocation || deliveryAddress || "",
+      });
+      toast.success("Booking successful!");
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
+  const pricePerDay = carPrice;
   const finalTotalPrice = useMemo(() => {
     if (!date.from || !date.to) return 0;
     const days = differenceInDays(date.to, date.from) + 1;
     const total = days * pricePerDay * 1.1;
     return selectedOption === "option-two" ? total * 1.1 : total;
-  }, [date, selectedOption]);
+  }, [date, selectedOption, pricePerDay]);
+
+  useEffect(() => {
+    onTotalChange(finalTotalPrice); // Gửi giá trị lên component cha khi thay đổi
+  }, [finalTotalPrice, onTotalChange]);
 
   return (
     <div className="p-2 bg-transparent border border-yellow-500 rounded-md size-full backdrop-blur-md">
@@ -70,14 +115,12 @@ const BookingForm = () => {
                     Pick-up Location
                   </Label>
                 </div>
-
                 {selectedOption === "option-one" && (
                   <div className="flex items-center justify-between w-full gap-2 text-sm text-zinc-400">
                     <div className="flex items-center w-full gap-1">
                       <MapPinCheckIcon className="text-yellow-500 size-4" />
                       <p className="text-xs">{locations[city]}</p>
                     </div>
-
                     <Select
                       onValueChange={(value) =>
                         setCity(value as keyof typeof locations)
@@ -107,8 +150,8 @@ const BookingForm = () => {
                   </Label>
                 </div>
                 {selectedOption === "option-two" && (
-                  <div className="flex flex-col items-center gap-2 text-sm text-zinc-400">
-                    <div className="flex gap-1">
+                  <div className="flex flex-col items-center justify-between w-full gap-2 text-sm text-zinc-400">
+                    <div className="flex gap-1 items-center justify-between w-full">
                       <Input
                         onChange={(e) => setCustomAddress(e.target.value)}
                         placeholder="Enter delivery address"
@@ -124,6 +167,7 @@ const BookingForm = () => {
               </div>
             </RadioGroup>
           </div>
+
           <div className="space-y-3 text-base">
             <div className="flex items-center justify-between gap-4">
               <p>Car Rental Fee</p>
@@ -141,16 +185,16 @@ const BookingForm = () => {
           </div>
 
           <div className="flex items-center justify-center">
-            <Button className="w-full h-12 text-lg" variant={"revanta"} asChild>
-              <Link to={`/booking`}> Booking</Link>
+            <Button
+              className="w-full h-12 text-lg"
+              variant={"revanta"}
+              onClick={handleBooking}
+              disabled={loading}
+            >
+              {loading ? "Processing..." : "Booking"}
             </Button>
           </div>
         </div>
-        <p className="text-sm text-center">
-          {" "}
-          By reserving and renting a car, you agree to the Terms of Use and
-          Privacy Policy
-        </p>
       </div>
     </div>
   );

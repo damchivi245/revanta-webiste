@@ -36,8 +36,6 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    console.log("Check originalRequest:", originalRequest);
-    console.log("Check error:", error);
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
@@ -80,7 +78,7 @@ api.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
         useAuthStore.getState().logout();
-        // window.location.href = "/login"; // Chuyển hướng nếu refresh token hết hạn
+        window.location.href = "/login"; // Chuyển hướng nếu refresh token hết hạn
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

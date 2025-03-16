@@ -1,4 +1,4 @@
-import { addDays, format } from "date-fns";
+import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
 
@@ -23,8 +23,8 @@ export function DatePickerWithRange({ sendDate }: ChildProps) {
     }
   };
   const [date, setDate] = useState<DateRange | undefined>({
-    from: new Date(),
-    to: addDays(new Date(), 1),
+    from: undefined,
+    to: undefined,
   });
   return (
     <div className={cn("grid gap-2")}>
