@@ -21,6 +21,8 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         revanta:
           "px-6 py-3  font-montserrat font-bold text-black transition bg-yellow-500 rounded-lg hover:bg-yellow-600",
+        Invert:
+          "px-8 py-2 rounded-md bg-red-500 text-white font-bold transition duration-200 hover:bg-red-600 hover:text-black border-2 border-transparent hover:border-red-600",
         shimmer:
           "inline-flex h-12 animate-shimmer items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-slate-400 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50",
       },

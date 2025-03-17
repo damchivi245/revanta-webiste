@@ -20,6 +20,8 @@ import {
 import { useBookingStore } from "@/store/bookingStore";
 import { toast } from "sonner";
 import { useAuthStore } from "@/store/authStore";
+import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 
 const locations = {
   "Ho Chi Minh": "258 Thanh Thai, District 10",
@@ -30,16 +32,11 @@ const locations = {
 interface BookingFormProps {
   carId: string;
   carPrice: number;
-  onTotalChange: (total: number) => void;
 }
 
-const BookingForm: React.FC<BookingFormProps> = ({
-  carId,
-  carPrice,
-  onTotalChange,
-}) => {
+const BookingForm: React.FC<BookingFormProps> = ({ carId, carPrice }) => {
   const { user } = useAuthStore();
-  console.log("Check user", user);
+  const navigate = useNavigate();
   const [date, setDate] = useState<DateRange>({
     from: undefined,
     to: undefined,
@@ -47,7 +44,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
   const [city, setCity] = useState<keyof typeof locations>("Ho Chi Minh");
   const [selectedOption, setSelectedOption] = useState("option-one");
   const [customAddress, setCustomAddress] = useState("");
-  const { createBooking, loading } = useBookingStore();
+  const { setBooking, loading, setTotalPrice } = useBookingStore();
 
   const pickupLocation =
     selectedOption === "option-one" ? locations[city] : null;
@@ -67,31 +64,48 @@ const BookingForm: React.FC<BookingFormProps> = ({
       toast.warning("Please enter a delivery address");
       return;
     }
-
     try {
-      await createBooking({
+      const bookingId = uuidv4();
+
+      await setBooking({
+        id: bookingId,
         carId: carId || "",
-        startDate: date.from.toISOString(),
-        endDate: date.to.toISOString(),
+        startDate: date.from,
+        endDate: date.to,
         pickUp: pickupLocation || deliveryAddress || "",
       });
-      toast.success("Booking successful!");
+      navigate(`/booking-confirm/${bookingId}`);
+      toast.info("Please confirm your booking to continue");
     } catch (error: any) {
       toast.error(error.message);
     }
   };
 
   const pricePerDay = carPrice;
-  const finalTotalPrice = useMemo(() => {
+  const days = useMemo(() => {
     if (!date.from || !date.to) return 0;
-    const days = differenceInDays(date.to, date.from) + 1;
-    const total = days * pricePerDay * 1.1;
-    return selectedOption === "option-two" ? total * 1.1 : total;
-  }, [date, selectedOption, pricePerDay]);
+    return differenceInDays(date.to, date.from) + 1;
+  }, [date]);
+
+  const basePrice = useMemo(() => {
+    return days * pricePerDay;
+  }, [days, pricePerDay]);
+
+  const tax = useMemo(() => basePrice * 0.05, [basePrice]);
+
+  const optionFee = useMemo(
+    () => (selectedOption === "option-two" ? basePrice + tax + 50 : 0),
+    [basePrice, tax, selectedOption]
+  );
+
+  const finalTotalPrice = useMemo(
+    () => basePrice + tax + optionFee,
+    [basePrice, tax, optionFee]
+  );
 
   useEffect(() => {
-    onTotalChange(finalTotalPrice); // Gửi giá trị lên component cha khi thay đổi
-  }, [finalTotalPrice, onTotalChange]);
+    setTotalPrice(finalTotalPrice);
+  }, [finalTotalPrice, setTotalPrice]);
 
   return (
     <div className="p-2 bg-transparent border border-yellow-500 rounded-md size-full backdrop-blur-md">
@@ -160,7 +174,10 @@ const BookingForm: React.FC<BookingFormProps> = ({
                     </div>
                     <div className="flex justify-between w-full gap-2">
                       <p>Delivery Fee:</p>
-                      <p>10%</p>
+                      <p>
+                        ${new Intl.NumberFormat("en-US").format(optionFee)} +
+                        $50
+                      </p>
                     </div>
                   </div>
                 )}
@@ -170,17 +187,19 @@ const BookingForm: React.FC<BookingFormProps> = ({
 
           <div className="space-y-3 text-base">
             <div className="flex items-center justify-between gap-4">
-              <p>Car Rental Fee</p>
+              <p>Car Rental Per Day Fee</p>
               <p>$ {new Intl.NumberFormat("en-US").format(pricePerDay)}</p>
             </div>
             <div className="flex items-center justify-between gap-4">
-              <p>VAT</p>
-              <p>10%</p>
+              <p>Tax</p>
+              <p>$ {new Intl.NumberFormat("en-US").format(tax)} (5%)</p>
             </div>
 
-            <div className="flex items-center justify-between gap-4 p-1 font-bold text-black bg-yellow-400 rounded-md">
+            <div className="flex items-center text-xl justify-between gap-4 p-1 font-bold text-black bg-yellow-400 rounded-md">
               <p>Total</p>
-              <p>$ {new Intl.NumberFormat("en-US").format(finalTotalPrice)}</p>
+              <p> {days}-day rent</p>
+
+              <p>$ {new Intl.NumberFormat("en-US").format(finalTotalPrice)} </p>
             </div>
           </div>
 

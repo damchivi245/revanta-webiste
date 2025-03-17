@@ -13,6 +13,7 @@ import PaymentPage from "./pages/Payment/PaymentPage";
 import UserProfilePage from "./pages/User/UserProfilePage";
 
 import ScrollToTop from "./components/ScrollToTop";
+import BookingConfirm from "./pages/Payment/BookingConfirm";
 
 export default function App() {
   return (
@@ -28,7 +29,9 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/product/:id" element={<ProductDetailPage />} />
-          <Route path="/payment" element={<PaymentPage />} />
+          <Route path="/booking-confirm/:id" element={<BookingConfirm />} />
+
+          <Route path="/payment/:id" element={<PaymentPage />} />
           <Route path="/user/:id" element={<UserProfilePage />} />
         </Route>
 

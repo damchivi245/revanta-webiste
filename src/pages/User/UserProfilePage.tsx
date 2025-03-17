@@ -85,7 +85,7 @@ const UserProfilePage = () => {
     const { name, value } = event.target;
     setForm((prevForm) => ({
       ...prevForm,
-      [name]: value || "", // Đảm bảo không fallback về user.data
+      [name]: value || "",
     }));
   };
 
@@ -98,7 +98,6 @@ const UserProfilePage = () => {
       } else {
         toast.error("User ID is missing.");
       }
-      console.log("Submitting form:", form);
     } catch (error) {
       toast.error("Failed to update profile.");
       console.error("Error updating user profile:", error);
@@ -171,7 +170,7 @@ const UserProfilePage = () => {
                           value={form.lastName}
                           placeholder="First name"
                           onChange={handleFormChange}
-                          onBlur={() => setEditMode(false)} // Mất focus thì thoát chế độ chỉnh sửa
+                          onBlur={() => setEditMode(false)}
                           className=" text-xl md:text-3xl font-bold"
                         />
                         <Input
@@ -179,7 +178,7 @@ const UserProfilePage = () => {
                           value={form.firstName}
                           placeholder="First name"
                           onChange={handleFormChange}
-                          onBlur={() => setEditMode(false)} // Mất focus thì thoát chế độ chỉnh sửa
+                          onBlur={() => setEditMode(false)}
                           className=" text-xl md:text-3xl font-bold"
                         />
                       </div>
@@ -280,7 +279,7 @@ const UserProfilePage = () => {
                       24/7
                     </li>
                   </ul>
-                  {/* Nút CTA */}
+
                   <Button variant={"shimmer"} className="mt-4 w-full">
                     Upgrade to Platinum
                   </Button>

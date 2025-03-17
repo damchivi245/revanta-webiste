@@ -55,6 +55,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       const res = await api.post("/login", { email, password });
       const token = res.data.data.accessToken;
+      console.log("Check toekn", token);
       if (!token) throw new Error("Không nhận được accessToken");
       get().setAccessToken(token);
       await get().fetchUser();

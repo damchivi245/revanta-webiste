@@ -75,12 +75,13 @@ export interface UpdateCar {
   colors: string[];
 }
 
-export interface CreateBooking {
-  carId: string;
+export interface CreateBookingData {
+  id: string;
   // userId: string;
+  carId: string;
   pickUp: string;
-  startDate: string;
-  endDate: string;
+  startDate: Date;
+  endDate: Date;
 }
 
 export interface BookingData {

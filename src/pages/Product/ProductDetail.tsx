@@ -20,7 +20,6 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import BookingPage from "../../components/BookingConfirm";
 
 const amenitiesList = [
   {
@@ -56,7 +55,6 @@ function ProductDetailPage() {
   const navigate = useNavigate();
   const [hoveredAmenity, setHoveredAmenity] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState("default");
-  const [totalPrice, setTotalPrice] = useState(0);
 
   useEffect(() => {
     if (id) {
@@ -275,18 +273,10 @@ function ProductDetailPage() {
               <p className="font-montserrat ">Overview</p>
             </div>
             <div className="col-span-1 size-full">
-              {id && (
-                <BookingForm
-                  carId={id}
-                  carPrice={car.data.price}
-                  onTotalChange={setTotalPrice}
-                />
-              )}
+              {id && <BookingForm carId={id} carPrice={car.data.price} />}
             </div>
           </div>
-          <div className="size-full">
-            <BookingPage totalPrice={totalPrice} />
-          </div>
+
           <div className="flex flex-col w-full gap-2 p-4">
             <h1 className="text-3xl font-montserrat">Similar vehicles</h1>
             <CarouselSize />

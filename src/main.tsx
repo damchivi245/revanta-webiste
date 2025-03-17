@@ -4,13 +4,11 @@ import "./styles/index.css";
 import "./styles/app.css";
 
 import App from "./App.tsx";
-import { ModalProvider } from "./components/ui/animated-modal.tsx";
 
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>
-  <ModalProvider>
-    {" "}
-    <App />
-  </ModalProvider>
+
+  <App />
+
   //  </StrictMode>
 );
