@@ -55,7 +55,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       const res = await api.post("/login", { email, password });
       const token = res.data.data.accessToken;
-      console.log("Check toekn", token);
       if (!token) throw new Error("Không nhận được accessToken");
       get().setAccessToken(token);
       await get().fetchUser();
@@ -80,7 +79,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
-  logout: () => {
+  logout: async () => {
+    try {
+      await api.post("/logout"); // Server sẽ clear cookie
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
     localStorage.removeItem("accessToken");
     set({ accessToken: null, user: null });
   },

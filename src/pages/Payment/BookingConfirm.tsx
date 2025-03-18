@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { useUserStore } from "@/store/userStore";
 import { CustomAlertDialog } from "@/components/modals/customAlertDialog";
 import { useNavigate } from "react-router-dom";
+import CustomVerifyDialog from "@/components/modals/customVerifyDialog";
 
 // interface TotalFeeProps {
 //   totalPrice: number;
@@ -27,8 +28,15 @@ const BookingConfirm = () => {
   const { user } = useAuthStore();
   const { updateUser } = useUserStore();
   const navigate = useNavigate();
-  const { booking, totalPrice, createBooking, clearBooking } =
-    useBookingStore();
+  const {
+    booking,
+    totalPrice,
+    days,
+    bookingsResponseData,
+    verifyBooking,
+    createBooking,
+    clearBooking,
+  } = useBookingStore();
   const { car } = useCarStore();
   const [form, setForm] = useState<UpdateUser>({
     firstName: user?.data?.firstName || "",
@@ -71,12 +79,21 @@ const BookingConfirm = () => {
     }));
   };
 
-  const handleConfirm = async () => {
+  const handleCreateBooking = async () => {
     await createBooking();
   };
   const handleClearBooking = () => {
     clearBooking();
     navigate("/products");
+  };
+
+  const handleVerifyOTP = async ({ pin }: { pin: string }) => {
+    const { id: bookingId, otp } = bookingsResponseData?.data || {};
+    if (!bookingId || !otp) {
+      return;
+    }
+
+    await verifyBooking({ bookingId, otp: pin });
   };
 
   return (
@@ -90,14 +107,14 @@ const BookingConfirm = () => {
             </p>
           </div>
 
-          <div className="flex flex-col items-center gap-4 text-sm w-full font-montserrat">
+          <div className="flex flex-col items-center w-full gap-4 text-sm font-montserrat">
             <form
-              className="w-full max-w-2xl p-6 bg-zinc-900/80 shadow-lg rounded-lg space-y-4"
+              className="w-full max-w-2xl p-6 space-y-4 rounded-lg shadow-lg bg-zinc-900/80"
               onSubmit={handleSubmit}
             >
               {/* Full Name */}
               <div>
-                <h1 className="text-gray-400 mb-1">Full Name</h1>
+                <h1 className="mb-1 text-gray-400">Full Name</h1>
                 <div className="flex gap-2">
                   <Input
                     name="firstName"
@@ -118,7 +135,7 @@ const BookingConfirm = () => {
 
               {/* Email */}
               <div>
-                <h1 className="text-gray-400 mb-1">Email</h1>
+                <h1 className="mb-1 text-gray-400">Email</h1>
                 <Input
                   disabled
                   value={user?.data.email}
@@ -127,9 +144,9 @@ const BookingConfirm = () => {
               </div>
 
               {/* Phone & Address */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                  <h1 className="text-gray-400 mb-1">Phone Number</h1>
+                  <h1 className="mb-1 text-gray-400">Phone Number</h1>
                   <Input
                     name="phone"
                     onChange={handleFormChange}
@@ -138,7 +155,7 @@ const BookingConfirm = () => {
                   />
                 </div>
                 <div>
-                  <h1 className="text-gray-400 mb-1">Address</h1>
+                  <h1 className="mb-1 text-gray-400">Address</h1>
                   <Input
                     name="address"
                     onChange={handleFormChange}
@@ -153,7 +170,7 @@ const BookingConfirm = () => {
                 <Button
                   type="submit"
                   variant="revanta"
-                  className="w-full md:w-1/2 h-12 font-bold text-lg"
+                  className="w-full h-12 text-lg font-bold md:w-1/2"
                 >
                   Update
                 </Button>
@@ -166,16 +183,13 @@ const BookingConfirm = () => {
           <div className="space-y-4">
             <h1 className="text-xl font-montserrat">Order Information</h1>
             <div className="p-6 space-y-4 rounded-lg shadow-md bg-neutral-900 font-montserrat">
-              <h1 className="p-2 bg-yellow-500 md:text-base text-xs rounded-md font-bold text-black">
-                Booking ID: {booking?.id}
-              </h1>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="flex flex-col gap-2">
                   <p className="text-sm font-medium text-gray-400">
                     Rental period
                   </p>
-                  <div className="flex flex-col md:flex-row items-center gap-2 w-full font-montserrat">
-                    <div className="flex items-center gap-2 bg-yellow-500 text-black px-3 py-1 rounded-lg shadow-md">
+                  <div className="flex flex-col items-center w-full gap-2 md:flex-row font-montserrat">
+                    <div className="flex items-center gap-2 px-3 py-1 text-black bg-yellow-500 rounded-lg shadow-md">
                       <span className="text-lg">
                         <CalendarRangeIcon />
                       </span>
@@ -188,7 +202,7 @@ const BookingConfirm = () => {
                       </p>
                     </div>
 
-                    <div className="flex  items-center gap-2 bg-yellow-500 text-black px-3 py-1 rounded-lg shadow-md">
+                    <div className="flex items-center gap-2 px-3 py-1 text-black bg-yellow-500 rounded-lg shadow-md">
                       <span className="text-lg">
                         <CalendarRangeIcon />
                       </span>
@@ -211,17 +225,17 @@ const BookingConfirm = () => {
               </div>
 
               <hr className="border-gray-600" />
-              <div className="flex flex-col p-2 border justify-center items-center border-yellow-500 rounded-md gap-1">
-                <p className="text-base md:text-2xl text-black bg-yellow-500 rounded-sm p-1 font-bold text-center w-full">
+              <div className="flex flex-col items-center justify-center gap-1 p-2 border border-yellow-500 rounded-md">
+                <p className="w-full p-1 text-base font-bold text-center text-black bg-yellow-500 rounded-sm md:text-2xl">
                   {car?.data.name} - {car?.data.year}
                 </p>
                 <img
                   src={car?.data.image}
-                  className=" object-cover rounded-md size-full "
+                  className="object-cover rounded-md size-full"
                 />
                 <div className="flex flex-col gap-1">
-                  <div className="flex flex-wrap gap-x-3 text-black font-montserrat text-xs md:text-base">
-                    <div className="flex gap-1 rounded-md text-yellow-500 w-fit justify-between items-center">
+                  <div className="flex flex-wrap text-xs text-black gap-x-3 font-montserrat md:text-base">
+                    <div className="flex items-center justify-between gap-1 text-yellow-500 rounded-md w-fit">
                       <div className="flex items-center justify-center gap-1">
                         <span>
                           <TypeIcon className="size-4" />
@@ -229,7 +243,7 @@ const BookingConfirm = () => {
                         <p> {car?.data?.model}</p>
                       </div>
                     </div>
-                    <div className="flex gap-1 rounded-md text-yellow-500 w-fit justify-between items-center">
+                    <div className="flex items-center justify-between gap-1 text-yellow-500 rounded-md w-fit">
                       {" "}
                       <div className="flex items-center justify-center gap-1">
                         <span>
@@ -238,7 +252,7 @@ const BookingConfirm = () => {
                         <p> {car?.data?.seats}</p>
                       </div>
                     </div>
-                    <div className="flex gap-1 rounded-md text-yellow-500 w-fit justify-between items-center">
+                    <div className="flex items-center justify-between gap-1 text-yellow-500 rounded-md w-fit">
                       {" "}
                       <div className="flex items-center justify-center gap-1">
                         <span>
@@ -248,7 +262,7 @@ const BookingConfirm = () => {
                       </div>
                     </div>
 
-                    <div className="flex gap-1 rounded-md text-yellow-500 w-fit justify-between items-center">
+                    <div className="flex items-center justify-between gap-1 text-yellow-500 rounded-md w-fit">
                       {" "}
                       <div className="flex items-center justify-center gap-1">
                         <span>
@@ -258,9 +272,9 @@ const BookingConfirm = () => {
                       </div>
                     </div>
 
-                    <div className="flex gap-1 rounded-md text-yellow-500 w-fit justify-between items-center">
+                    <div className="flex items-center justify-between gap-1 text-yellow-500 rounded-md w-fit">
                       {" "}
-                      <div className="flex  items-center justify-center gap-1">
+                      <div className="flex items-center justify-center gap-1">
                         <span>
                           <DropletsIcon className="size-4" />
                         </span>
@@ -272,23 +286,24 @@ const BookingConfirm = () => {
               </div>
               <hr className="border-gray-600" />
 
-              <div className="flex justify-between text-base md:text-3xl font-semibold text-white">
+              <div className="flex justify-between text-base font-semibold text-white md:text-3xl">
                 <p>Total Fee</p>
+                <p>{days}-day rent</p>
                 <p>{totalPrice.toLocaleString()} USD</p>
               </div>
               <hr className="border-gray-600" />
               <div className="flex gap-1">
                 <div className="w-full text-center">
-                  <Button
-                    className="size-full"
-                    variant={"revanta"}
-                    size={"lg"}
-                    onClick={() => {
-                      handleConfirm();
-                    }}
-                  >
-                    Confirm
-                  </Button>
+                  <CustomVerifyDialog
+                    title="Confirm Transaction"
+                    description="Enter the OTP to complete your transaction."
+                    verifyText="Confirm Payment"
+                    triggerText="Confirm"
+                    triggerColor="size-full"
+                    variant="revanta"
+                    onVerify={handleVerifyOTP}
+                    onCreate={handleCreateBooking}
+                  />
                 </div>
 
                 <div className="w-full text-center">

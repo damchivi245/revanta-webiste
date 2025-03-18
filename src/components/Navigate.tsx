@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { motion } from "framer-motion";
@@ -24,9 +24,14 @@ const auth = [
 ];
 
 const Navigate = () => {
+  const navigate = useNavigate();
   const { user, logout } = useAuthStore();
-
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
   return (
     <nav className="fixed inset-x-0 z-50 flex items-center justify-center top-5">
       <div className="w-[90%] md:w-[64rem] h-14 pl-6 pr-1 bg-black/50 shadow-lg backdrop-blur-md rounded-full flex justify-between items-center border border-zinc-700/50">
@@ -97,7 +102,7 @@ const Navigate = () => {
                 </div>
                 <div className="grid w-full gap-1">
                   <Button variant={"revanta"}>Your order</Button>
-                  <Button variant={"revanta"} onClick={logout}>
+                  <Button variant={"revanta"} onClick={handleLogout}>
                     Log Out
                   </Button>
                 </div>
@@ -170,7 +175,7 @@ const Navigate = () => {
               </div>
               <div className="grid gap-1 ">
                 <Button variant={"revanta"}>Your order</Button>
-                <Button variant={"revanta"} onClick={logout}>
+                <Button variant={"revanta"} onClick={handleLogout}>
                   Log Out
                 </Button>
               </div>

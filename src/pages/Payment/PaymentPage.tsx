@@ -1,6 +1,20 @@
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useState } from "react";
+import { useAuthStore } from "@/store/authStore";
+import { useBookingStore } from "@/store/bookingStore";
+import { useCarStore } from "@/store/carStore";
+import {
+  CalendarHeartIcon,
+  CarIcon,
+  DollarSignIcon,
+  HomeIcon,
+  MailIcon,
+  MapPinIcon,
+  PhoneIcon,
+  UserIcon,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 const paymentMethods = [
   { id: 1, method: "Cash" },
@@ -8,26 +22,24 @@ const paymentMethods = [
   { id: 3, method: "Paypal" },
 ];
 
-// 🛒 Giả lập đơn hàng thuê xe
-const bookingInfo = {
-  carName: "Tesla Model 3",
-  rentalDays: 3,
-  pricePerDay: 50,
-  tax: 5,
-};
-
-const totalPrice =
-  bookingInfo.rentalDays * bookingInfo.pricePerDay + bookingInfo.tax;
-
 const PaymentPage = () => {
   const [payment, setPayment] = useState(paymentMethods[0]);
-
+  const { bookingsResponseData, days, totalPrice } = useBookingStore();
+  const { car, fetchCarDetail } = useCarStore();
+  const { user } = useAuthStore();
+  console.log("Check user", user);
   const handlePaymentChange = (id: number) => {
     const selectedPayment = paymentMethods.find((p) => p.id === id);
     if (selectedPayment) {
       setPayment(selectedPayment);
     }
   };
+  useEffect(() => {
+    const carId = bookingsResponseData?.data?.carId;
+    if (carId) {
+      fetchCarDetail(carId);
+    }
+  }, [bookingsResponseData, fetchCarDetail]);
 
   const renderPaymentUI = () => {
     switch (payment.id) {
@@ -43,47 +55,92 @@ const PaymentPage = () => {
   };
 
   return (
-    <div className="bg-black pt-28 pb-4 size-full text-white font-montserrat">
-      <div className="container mx-2 md:mx-auto">
-        <div className="grid grid-cols-4 gap-3">
-          {/* Chọn phương thức thanh toán */}
-          <div className="col-span-1">
-            <h1 className="mb-2 text-lg font-semibold">Payment Method</h1>
-            <RadioGroup
-              onValueChange={(value) => handlePaymentChange(Number(value))}
-              defaultValue={payment.id.toString()}
-            >
-              {paymentMethods.map((value) => (
-                <div key={value.id} className="flex items-center space-x-2">
-                  <RadioGroupItem
-                    className="bg-zinc-700"
-                    value={value.id.toString()}
-                    id={`r${value.id}`}
-                  />
-                  <Label htmlFor={`r${value.id}`}>{value.method}</Label>
-                </div>
-              ))}
-            </RadioGroup>
-          </div>
-
+    <div className="pb-4 text-white bg-black pt-28 size-full font-montserrat">
+      <div className="container px-2 md:mx-auto">
+        <div className="">
           {/* Thông tin đơn hàng + UI thanh toán */}
-          <div className="col-span-3 p-4 border rounded-md border-zinc-200">
-            <h2 className="text-lg font-semibold mb-2">Order Summary</h2>
-            <div className="p-3 bg-gray-800 rounded-md">
-              <p>🚗 Car: {bookingInfo.carName}</p>
-              <p>📅 Days: {bookingInfo.rentalDays} days</p>
-              <p>💰 Price/Day: ${bookingInfo.pricePerDay}</p>
-              <p>🧾 Tax: ${bookingInfo.tax}</p>
-              <p className="font-bold text-xl mt-2">Total: ${totalPrice}</p>
+          <div className="p-4 space-y-2 border border-yellow-500 rounded-md bg-neutral-950 font-montserrat">
+            <h2 className="mb-2 text-xl font-semibold text-center md:text-5xl font-cinzel ">
+              Order Summary
+            </h2>
+            <div className="grid grid-cols-1 gap-3 p-3 text-xs rounded-md md:grid-cols-2 md:text-lg bg-zinc-800/30 backdrop-blur-sm">
+              {/* Thông tin xe */}
+              <div className="col-span-1 p-2 space-y-2 border border-yellow-500 rounded-md">
+                <div className="flex items-center gap-1">
+                  <CarIcon /> {car?.data.name}
+                </div>
+                <div className="flex items-center gap-1">
+                  <CalendarHeartIcon /> {days} days
+                </div>
+                <div className="flex items-center gap-1">
+                  <DollarSignIcon /> Price/Day: ${" "}
+                  {new Intl.NumberFormat("en-US").format(car?.data?.price ?? 0)}
+                </div>
+                <div className="flex items-center gap-1">
+                  <MapPinIcon /> Pick-up location:{" "}
+                  {bookingsResponseData?.data?.pickUp}
+                </div>
+              </div>
+
+              {/* Thông tin người dùng */}
+              <div className="col-span-1 p-2 space-y-2 border border-yellow-500 rounded-md">
+                <div className="flex items-center gap-1">
+                  <UserIcon /> Fullname: {user?.data.lastName}{" "}
+                  {user?.data.firstName}
+                </div>
+                <div className="flex items-center gap-1">
+                  <PhoneIcon /> Phone: {user?.data.phone}
+                </div>
+                <div className="flex items-center gap-1">
+                  <MailIcon /> Email: {user?.data.email}
+                </div>
+                <div className="flex items-center gap-1">
+                  <HomeIcon /> Address: {user?.data.address}
+                </div>
+              </div>
+            </div>
+            <div className="w-full overflow-hidden rounded-md">
+              <img
+                src={car?.data.image}
+                alt={car?.data.name}
+                className="object-cover size-full"
+              />
+            </div>
+            <div className="flex items-center justify-between w-full gap-2 p-2 text-xl font-extrabold text-black bg-yellow-500 rounded-md">
+              <p>Total:</p>
+              <p>
+                {new Intl.NumberFormat("en-US").format(totalPrice ?? 0)} USD
+              </p>
+            </div>
+            <div className="p-2 space-y-3 border border-yellow-500 rounded-md">
+              <h1 className="text-xl font-semibold ">Payment Method</h1>
+              <RadioGroup
+                onValueChange={(value) => handlePaymentChange(Number(value))}
+                defaultValue={payment.id.toString()}
+              >
+                {paymentMethods.map((value) => (
+                  <div key={value.id} className="flex items-center space-x-2 ">
+                    <RadioGroupItem
+                      className=" bg-zinc-700"
+                      value={value.id.toString()}
+                      id={`r${value.id}`}
+                    />
+                    <Label className="text-lg" htmlFor={`r${value.id}`}>
+                      {value.method}
+                    </Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </div>
+            {/* UI theo phương thức thanh toán */}
+            <div className="p-2 border border-yellow-500 rounded-md">
+              {renderPaymentUI()}
             </div>
 
-            {/* UI theo phương thức thanh toán */}
-            <div className="mt-4">{renderPaymentUI()}</div>
-
             {/* Nút xác nhận thanh toán */}
-            <button className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white py-2 rounded-md">
+            <Button variant={"shimmer"} className="w-full h-12 text-xl">
               Confirm & Pay
-            </button>
+            </Button>
           </div>
         </div>
       </div>

@@ -44,7 +44,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ carId, carPrice }) => {
   const [city, setCity] = useState<keyof typeof locations>("Ho Chi Minh");
   const [selectedOption, setSelectedOption] = useState("option-one");
   const [customAddress, setCustomAddress] = useState("");
-  const { setBooking, loading, setTotalPrice } = useBookingStore();
+  const { setBooking, loading, setTotalPrice, setDays } = useBookingStore();
 
   const pickupLocation =
     selectedOption === "option-one" ? locations[city] : null;
@@ -74,7 +74,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ carId, carPrice }) => {
         endDate: date.to,
         pickUp: pickupLocation || deliveryAddress || "",
       });
-      navigate(`/booking-confirm/${bookingId}`);
+      navigate(`/booking-confirm`);
       toast.info("Please confirm your booking to continue");
     } catch (error: any) {
       toast.error(error.message);
@@ -87,25 +87,26 @@ const BookingForm: React.FC<BookingFormProps> = ({ carId, carPrice }) => {
     return differenceInDays(date.to, date.from) + 1;
   }, [date]);
 
-  const basePrice = useMemo(() => {
-    return days * pricePerDay;
-  }, [days, pricePerDay]);
+  const basePrice = useMemo(() => days * pricePerDay, [days, pricePerDay]);
 
   const tax = useMemo(() => basePrice * 0.05, [basePrice]);
 
+  // Chỉ cộng thêm 50 nếu chọn "option-two"
   const optionFee = useMemo(
-    () => (selectedOption === "option-two" ? basePrice + tax + 50 : 0),
-    [basePrice, tax, selectedOption]
+    () => (selectedOption === "option-two" ? 50 : 0),
+    [selectedOption]
   );
 
+  // Tổng tiền cuối cùng
   const finalTotalPrice = useMemo(
     () => basePrice + tax + optionFee,
     [basePrice, tax, optionFee]
   );
 
   useEffect(() => {
+    setDays(days);
     setTotalPrice(finalTotalPrice);
-  }, [finalTotalPrice, setTotalPrice]);
+  }, [finalTotalPrice, days, setTotalPrice, setDays]);
 
   return (
     <div className="p-2 bg-transparent border border-yellow-500 rounded-md size-full backdrop-blur-md">
@@ -165,7 +166,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ carId, carPrice }) => {
                 </div>
                 {selectedOption === "option-two" && (
                   <div className="flex flex-col items-center justify-between w-full gap-2 text-sm text-zinc-400">
-                    <div className="flex gap-1 items-center justify-between w-full">
+                    <div className="flex items-center justify-between w-full gap-1">
                       <Input
                         onChange={(e) => setCustomAddress(e.target.value)}
                         placeholder="Enter delivery address"
@@ -174,10 +175,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ carId, carPrice }) => {
                     </div>
                     <div className="flex justify-between w-full gap-2">
                       <p>Delivery Fee:</p>
-                      <p>
-                        ${new Intl.NumberFormat("en-US").format(optionFee)} +
-                        $50
-                      </p>
+                      <p>+ $50</p>
                     </div>
                   </div>
                 )}
@@ -187,7 +185,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ carId, carPrice }) => {
 
           <div className="space-y-3 text-base">
             <div className="flex items-center justify-between gap-4">
-              <p>Car Rental Per Day Fee</p>
+              <p>Car Rental Fee Per Day</p>
               <p>$ {new Intl.NumberFormat("en-US").format(pricePerDay)}</p>
             </div>
             <div className="flex items-center justify-between gap-4">
@@ -195,7 +193,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ carId, carPrice }) => {
               <p>$ {new Intl.NumberFormat("en-US").format(tax)} (5%)</p>
             </div>
 
-            <div className="flex items-center text-xl justify-between gap-4 p-1 font-bold text-black bg-yellow-400 rounded-md">
+            <div className="flex items-center justify-between gap-4 p-1 text-xl font-bold text-black bg-yellow-400 rounded-md">
               <p>Total</p>
               <p> {days}-day rent</p>
 

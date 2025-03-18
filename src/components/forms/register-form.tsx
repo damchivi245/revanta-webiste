@@ -117,7 +117,7 @@ export function RegisterForm({
                         </FormControl>
                         <button
                           type="button"
-                          className="absolute inset-y-0 right-3 flex items-center text-gray-400"
+                          className="absolute inset-y-0 flex items-center text-gray-400 right-3"
                           onClick={() => setShowPassword(!showPassword)}
                         >
                           {showPassword ? (
@@ -138,7 +138,7 @@ export function RegisterForm({
                   name="rePassword"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Re-Password</FormLabel>
+                      <FormLabel>Confirm Password</FormLabel>
                       <div className="relative">
                         <FormControl>
                           <Input
@@ -148,7 +148,7 @@ export function RegisterForm({
                         </FormControl>
                         <button
                           type="button"
-                          className="absolute inset-y-0 right-3 flex items-center text-gray-400"
+                          className="absolute inset-y-0 flex items-center text-gray-400 right-3"
                           onClick={() => setShowPassword(!showPassword)}
                         >
                           {showPassword ? (

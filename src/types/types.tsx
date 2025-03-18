@@ -94,6 +94,8 @@ export interface BookingData {
     startDate: Date;
     endDate: Date;
     pickUp: string;
+    otp: string;
+    otpExpires: Date;
     status: BookingStatus;
   };
   success?: boolean;
@@ -104,4 +106,9 @@ enum BookingStatus {
   "CONFIRMED",
   "CANCELLED",
   "COMPLETED",
+}
+
+export interface CreateBookingVerifyData {
+  bookingId: string;
+  otp: string;
 }
