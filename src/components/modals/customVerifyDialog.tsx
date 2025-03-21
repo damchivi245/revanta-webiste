@@ -27,7 +27,7 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 // ✅ Schema xác thực OTP
 const FormSchema = z.object({
@@ -44,6 +44,7 @@ const CustomVerifyDialog = ({
   triggerText = "Open",
   triggerColor,
   variant = "default",
+
   onVerify,
   onCreate,
 }: {
@@ -53,6 +54,7 @@ const CustomVerifyDialog = ({
   verifyText?: string;
   triggerText?: string;
   triggerColor?: string;
+  url?: string;
   variant?:
     | "link"
     | "default"
@@ -66,27 +68,32 @@ const CustomVerifyDialog = ({
   onVerify?: (data: { pin: string }) => void;
   onCreate?: () => void;
 }) => {
-  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: { pin: "" },
   });
 
-  const handleVerifyOTP = (data: { pin: string }) => {
-    if (!data.pin) {
-      return;
+  const handleVerifyOTP = async (data: { pin: string }) => {
+    if (!data.pin) return;
+    try {
+      await onVerify?.(data);
+      setOpen(false); // Đóng modal khi OTP hợp lệ
+    } catch (error) {
+      console.error("OTP không hợp lệ:", error);
     }
-    onVerify?.(data);
-    navigate("/payment");
   };
 
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
         <Button
           variant={variant}
           className={`${triggerColor}`}
-          onClick={onCreate}
+          onClick={() => {
+            setOpen(true);
+            onCreate?.();
+          }}
         >
           {triggerText}
         </Button>

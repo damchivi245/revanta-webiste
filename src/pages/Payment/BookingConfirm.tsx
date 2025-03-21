@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/authStore";
@@ -37,13 +37,20 @@ const BookingConfirm = () => {
     createBooking,
     clearBooking,
   } = useBookingStore();
-  const { car } = useCarStore();
+  const { car, fetchCarDetail } = useCarStore();
   const [form, setForm] = useState<UpdateUser>({
     firstName: user?.data?.firstName || "",
     lastName: user?.data?.lastName || "",
     address: user?.data?.address || "",
     phone: user?.data?.phone || "",
   });
+
+  useEffect(() => {
+    if (!car?.data) {
+      fetchCarDetail(booking?.carId || "");
+    }
+  }, [car, fetchCarDetail, booking]);
+
   useEffect(() => {
     if (user?.data) {
       setForm({
@@ -69,19 +76,23 @@ const BookingConfirm = () => {
       console.error("Error updating user profile:", error);
     }
   };
-  const handleFormChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const { name, value } = event.target;
-    setForm((prevForm) => ({
-      ...prevForm,
-      [name]: value || "",
-    }));
+
+  const handleFormChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = event.target;
+      setForm((prevForm) => ({ ...prevForm, [name]: value }));
+    },
+    []
+  );
+  const handleCreateBooking = async () => {
+    try {
+      await createBooking();
+    } catch (error) {
+      toast.error("Failed to create booking.");
+      console.error("Booking error:", error);
+    }
   };
 
-  const handleCreateBooking = async () => {
-    await createBooking();
-  };
   const handleClearBooking = () => {
     clearBooking();
     navigate("/products");
@@ -89,11 +100,17 @@ const BookingConfirm = () => {
 
   const handleVerifyOTP = async ({ pin }: { pin: string }) => {
     const { id: bookingId, otp } = bookingsResponseData?.data || {};
-    if (!bookingId || !otp) {
-      return;
+
+    if (!bookingId || !otp) return;
+
+    try {
+      await verifyBooking({ bookingId, otp: pin });
+    } catch (error) {
+      console.error("OTP không hợp lệ:", error);
+      return; // Ngăn không cho chạy tiếp nếu có lỗi
     }
 
-    await verifyBooking({ bookingId, otp: pin });
+    navigate(`/payment/${bookingId}`);
   };
 
   return (
@@ -137,7 +154,7 @@ const BookingConfirm = () => {
               <div>
                 <h1 className="mb-1 text-gray-400">Email</h1>
                 <Input
-                  disabled
+                  readOnly
                   value={user?.data.email}
                   className="bg-gray-700"
                 />

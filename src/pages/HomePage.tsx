@@ -1,19 +1,18 @@
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import gsap from "gsap";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-// import { AuroraBackground } from "@/components/backgrounds/aurora-backgound";
+import { AuroraBackground } from "@/components/backgrounds/aurora-backgound";
 import { LayoutGridComponent } from "@/components/LayoutGrid";
 import { DirectionAwareHoverComponent } from "@/components/DirectionAwareHover";
-import { CarouselSize } from "@/components/ProductCarousel";
-import { CarouselBrand } from "@/components/BrandCarousel";
-import { DatePickerWithRange } from "@/components/DateRangePicker";
-import { TimePicker } from "@/components/TimePicker";
+// import { CarouselSize } from "@/components/ProductCarousel";
+// import { CarouselBrand } from "@/components/BrandCarousel";
+// import { DatePickerWithRange } from "@/components/DateRangePicker";
+// import { TimePicker } from "@/components/TimePicker";
 
-import { BackgroundBeamsWithCollision } from "@/components/backgrounds/background-beams-with-collision";
 import RentalInstructions from "@/components/RentalInstructions";
-import SelectLocation from "@/components/SelectLocation";
-import { SearchIcon } from "lucide-react";
+// import SelectLocation from "@/components/SelectLocation";
+// import { SearchIcon } from "lucide-react";
 
 const slogans = [
   "Revanta – Where Luxury Meets the Road.",
@@ -43,7 +42,7 @@ const HomePage = () => {
   }, []);
 
   return (
-    <BackgroundBeamsWithCollision className="flex flex-col items-center justify-center bg-black size-full">
+    <AuroraBackground className="flex flex-col items-center justify-center bg-black size-full">
       <div className="flex flex-col items-center justify-center w-full h-full gap-5 mt-20 md:mt-36">
         <div
           ref={textRef}
@@ -57,10 +56,10 @@ const HomePage = () => {
           </p>
         </div>
 
-        <div className="w-full px-8 md:px-24 h-fit">
-          <div className="text-white size-full backdrop-blur-sm rounded-xl bg-transparent border border-yellow-500 ">
-            <div className="grid grid-cols-1 md:grid-cols-8 items-center justify-between w-full h-full gap-5 p-5 ">
-              <div className="flex flex-col col-span-full md:col-span-4 items-start justify-between w-full gap-1">
+        {/* <div className="w-full px-8 md:px-24 h-fit">
+          <div className="text-white bg-transparent border border-yellow-500 size-full backdrop-blur-sm rounded-xl ">
+            <div className="grid items-center justify-between w-full h-full grid-cols-1 gap-5 p-5 md:grid-cols-8 ">
+              <div className="flex flex-col items-start justify-between w-full gap-1 col-span-full md:col-span-4">
                 <h1 className="text-sm font-montserrat ">Pick up location</h1>
                 <SelectLocation />
               </div>
@@ -76,14 +75,14 @@ const HomePage = () => {
                   </div>
                 </div>
               </div>
-              <div className="size-full col-span-full md:col-span-1 rounded-full text-center">
+              <div className="text-center rounded-full size-full col-span-full md:col-span-1">
                 <Button className="size-full" variant={"revanta"}>
                   <SearchIcon className="size-6" />
                 </Button>
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         <div className="relative flex items-center justify-center w-full h-16 overflow-hidden">
           <motion.div
@@ -99,7 +98,7 @@ const HomePage = () => {
         </div>
       </div>
       <div className="container flex flex-col items-center justify-center w-full h-full gap-12 mx-auto mb-4">
-        <div className="flex flex-col items-start justify-center w-full gap-5 p-8">
+        {/* <div className="flex flex-col items-start justify-center w-full gap-5 p-8">
           <h1 className="text-xl text-white md:text-4xl font-cinzel">
             Favorite Cars
           </h1>
@@ -109,7 +108,7 @@ const HomePage = () => {
         <div className="flex flex-col items-start justify-center w-full gap-5 p-8">
           <h1 className="text-xl text-white md:text-4xl font-cinzel">Brands</h1>
           <CarouselBrand />
-        </div>
+        </div> */}
 
         <div className="size-full">
           <LayoutGridComponent />
@@ -123,7 +122,7 @@ const HomePage = () => {
           <RentalInstructions />
         </div>
       </div>
-    </BackgroundBeamsWithCollision>
+    </AuroraBackground>
   );
 };
 

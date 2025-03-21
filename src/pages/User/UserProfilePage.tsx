@@ -121,7 +121,7 @@ const UserProfilePage = () => {
   }
 
   return (
-    <BackgroundLines className="text-white bg-black pt-28 size-full font-montserrat">
+    <BackgroundLines className="text-white bg-black pt-28 pb-4 size-full font-montserrat">
       <div className="mx-2 md:mx-20 my-0 space-y-2">
         <div className="relative p-6 overflow-hidden rounded-md bg-black/10 backdrop-blur-sm border border-yellow-500">
           <div className="absolute top-0 left-0 z-0 w-full h-[15%] md:h-[30%] bg-zinc-900">

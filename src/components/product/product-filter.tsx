@@ -4,17 +4,18 @@ import { Button } from "../ui/button";
 import { Filters } from "@/pages/Product/ProductsPage";
 
 const models = [
-  { id: 1, name: "SUV" },
-  { id: 2, name: "TU" },
-  { id: 3, name: "Mer" },
-  { id: 4, name: "CAR" },
+  { id: 1, name: "LVN" },
+  { id: 2, name: "GT" },
+  { id: 3, name: "V6" },
+  { id: 4, name: "F1" },
 ];
 
 const brands = [
-  { id: 1, name: "Toyota" },
-  { id: 2, name: "Tesla" },
-  { id: 3, name: "Mercides" },
-  { id: 4, name: "OHI" },
+  { id: 1, name: "Bugatti" },
+  { id: 2, name: "Porsche" },
+  { id: 3, name: "Mercedes" },
+  { id: 4, name: "McLaren" },
+  { id: 5, name: "Lamborghini" },
 ];
 
 const ProductFilter = ({
@@ -25,10 +26,10 @@ const ProductFilter = ({
   setFilters: React.Dispatch<React.SetStateAction<Filters>>;
 }) => {
   return (
-    <div className="bg-transparent  backdrop-blur-sm w-full p-3 rounded-lg shadow-md font-montserrat border border-yellow-500 text-white relative space-y-10 overflow-hidden">
+    <div className="relative w-full p-3 space-y-10 overflow-hidden text-white bg-transparent border border-yellow-500 rounded-lg shadow-md backdrop-blur-sm font-montserrat">
       {/* Header */}
-      <div className="bg-yellow-500 p-2 rounded-t-lg absolute top-0 left-0 w-full">
-        <h1 className="text-xl text-black font-bold text-center">Filter</h1>
+      <div className="absolute top-0 left-0 w-full p-2 bg-yellow-500 rounded-t-lg">
+        <h1 className="text-xl font-bold text-center text-black">Filter</h1>
       </div>
 
       <div className="space-y-3">
@@ -82,7 +83,7 @@ const ProductFilter = ({
         {/* Clear Filters Button */}
         <Button
           variant="revanta"
-          className="w-full flex justify-center items-center"
+          className="flex items-center justify-center w-full"
           onClick={() => setFilters({ selectedModel: "", selectedBrand: "" })}
         >
           Clear Filters

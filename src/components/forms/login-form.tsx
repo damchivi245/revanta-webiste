@@ -44,7 +44,7 @@ export function LoginForm({
                   to={"/"}
                   className="text-2xl font-bold text-yellow-500 font-cinzel"
                 >
-                  revanta
+                  Revanta
                 </Link>
                 <p className="text-balance text-muted-foreground">
                   Login to your account

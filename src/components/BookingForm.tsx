@@ -21,7 +21,7 @@ import { useBookingStore } from "@/store/bookingStore";
 import { toast } from "sonner";
 import { useAuthStore } from "@/store/authStore";
 import { useNavigate } from "react-router-dom";
-import { v4 as uuidv4 } from "uuid";
+// import { v4 as uuidv4 } from "uuid";
 
 const locations = {
   "Ho Chi Minh": "258 Thanh Thai, District 10",
@@ -65,10 +65,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ carId, carPrice }) => {
       return;
     }
     try {
-      const bookingId = uuidv4();
-
       await setBooking({
-        id: bookingId,
         carId: carId || "",
         startDate: date.from,
         endDate: date.to,

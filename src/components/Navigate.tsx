@@ -55,9 +55,25 @@ const Navigate = () => {
 
         {/* Account Menu */}
         <DropdownMenu>
-          <DropdownMenuTrigger className="items-center justify-center hidden w-12 h-12 text-white border rounded-full shadow-md md:flex bg-zinc-900 border-zinc-700 hover:bg-zinc-800">
-            R
+          <DropdownMenuTrigger className="flex items-center justify-center md:flex w-12 h-12 border border-yellow-500 rounded-full shadow-md bg-transparent transition-all duration-300 hover:bg-yellow-500 hover:shadow-lg">
+            <Avatar className="w-10 h-10">
+              <AvatarImage
+                src={user?.data?.image || ""}
+                alt={user?.data?.email || "User"}
+                className="object-cover w-full h-full rounded-full"
+              />
+              <AvatarFallback className="bg-yellow-500 text-black font-bold flex items-center justify-center w-full h-full">
+                {user?.data ? (
+                  (
+                    user?.data?.firstName?.[0] || user?.data?.email?.[0]
+                  )?.toUpperCase()
+                ) : (
+                  <div>R</div>
+                )}
+              </AvatarFallback>
+            </Avatar>
           </DropdownMenuTrigger>
+
           <DropdownMenuContent
             className="border-zinc-600 bg-zinc-800/60 backdrop-blur-md"
             align="end"
@@ -75,18 +91,6 @@ const Navigate = () => {
                 className="flex flex-col items-center justify-center w-full gap-1"
               >
                 <div className="flex items-center justify-between gap-1">
-                  <Avatar>
-                    <AvatarImage
-                      src={`${user.data.image}`}
-                      alt={`${user.data.email}`}
-                    />
-                    <AvatarFallback className="bg-zinc-500/50">
-                      {(
-                        user?.data?.firstName?.[0] || user?.data?.email?.[0]
-                      )?.toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-
                   <Link
                     to={`user/${user.data.id}`}
                     className="flex items-center gap-2 text-xl font-medium text-white transition-all duration-200 hover:text-yellow-300"

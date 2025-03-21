@@ -50,7 +50,7 @@ const amenitiesList = [
 ];
 
 function ProductDetailPage() {
-  const { id } = useParams(); // Lấy id từ URL
+  const { id } = useParams();
   const { car, fetchCarDetail, loading, error } = useCarStore();
   const navigate = useNavigate();
   const [hoveredAmenity, setHoveredAmenity] = useState<string | null>(null);

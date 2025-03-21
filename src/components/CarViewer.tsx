@@ -62,7 +62,7 @@ const CarModelViewer: React.FC<{ modelPath: string; colors: string }> = ({
   colors,
 }) => {
   return (
-    <div className="flex flex-col items-center size-full bg-transparent backdrop-blur-sm">
+    <div className="flex flex-col items-center bg-transparent size-full backdrop-blur-sm">
       <Canvas
         shadows
         camera={{ position: [0, 2, 7], fov: 50 }}
@@ -74,8 +74,8 @@ const CarModelViewer: React.FC<{ modelPath: string; colors: string }> = ({
           <Environment preset="sunset" />
           <OrbitControls
             enableZoom
-            minDistance={4}
-            maxDistance={7}
+            // minDistance={1}
+            // maxDistance={10}
             enablePan={false}
           />
           <CarViewer modelPath={modelPath} color={colors} />

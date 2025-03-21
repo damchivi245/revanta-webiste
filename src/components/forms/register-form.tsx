@@ -55,8 +55,8 @@ export function RegisterForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="overflow-hidden">
-        <CardContent className="grid p-0 md:grid-cols-2">
+      <Card className="overflow-hidden ">
+        <CardContent className="grid p-0 md:grid-cols-2 ">
           {/* Hình ảnh */}
           <div className="relative hidden bg-muted md:block">
             <img
@@ -75,7 +75,7 @@ export function RegisterForm({
                     to={"/"}
                     className="text-2xl font-bold text-yellow-500 font-cinzel"
                   >
-                    revanta
+                    Revanta
                   </Link>
                   <p className="text-balance text-muted-foreground">
                     Register Your Account

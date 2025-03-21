@@ -13,6 +13,7 @@ interface BookingState {
   booking: CreateBookingData | null;
   otp: CreateBookingVerifyData | null;
   bookingsResponseData: BookingData | null;
+  bookings: BookingData[] | null;
   days: number;
   totalPrice: number;
   loading: boolean;
@@ -20,6 +21,7 @@ interface BookingState {
   setDays: (days: number) => void;
   setTotalPrice: (totalPrice: number) => void;
   setBooking: (bookingData: CreateBookingData | null) => void;
+  fetchUserBookings: (userId: string) => Promise<void>;
   createBooking: () => Promise<void>;
   verifyBooking: (otpData: CreateBookingVerifyData) => Promise<void>;
 
@@ -32,6 +34,7 @@ export const useBookingStore = create<BookingState>()(
       (set, get) => ({
         booking: null,
         bookingsResponseData: null,
+        bookings: [],
         otp: null,
         loading: false,
         error: null,
@@ -41,7 +44,17 @@ export const useBookingStore = create<BookingState>()(
         setTotalPrice: (price: number) => set({ totalPrice: price }),
         setDays: (day: number) => set({ days: day }),
         setBooking: (bookingData) => set({ booking: bookingData }),
-
+        fetchUserBookings: async (userId: string) => {
+          set({ loading: true, error: null });
+          try {
+            const res = await api.get(`/bookings/user/${userId}`);
+            set({ bookings: res.data });
+          } catch (error: any) {
+            set({ error: error.response?.data?.message });
+          } finally {
+            set({ loading: false });
+          }
+        },
         createBooking: async () => {
           const { booking } = get();
           if (!booking) return;
@@ -54,7 +67,7 @@ export const useBookingStore = create<BookingState>()(
 
             set({ bookingsResponseData: currentBooking });
           } catch (error: any) {
-            toast.warning(error?.message);
+            toast.warning("This car has been booked during this time period!");
             set({ error: error?.message || "Đã xảy ra lỗi" });
           } finally {
             set({ loading: false });
@@ -65,16 +78,21 @@ export const useBookingStore = create<BookingState>()(
           set({ loading: true, error: null });
           try {
             const res = await api.post("/bookings/verify-otp", otpData);
-            toast.success(res.data.message);
+            if (res?.data?.message) {
+              toast.success(res.data.message);
+            } else {
+              throw new Error("Invalid response from server");
+            }
           } catch (error: any) {
-            toast.warning(error?.message);
+            toast.error("OTP code is invalid or expired!");
 
             set({ error: error?.message || "Đã xảy ra lỗi" });
           } finally {
             set({ loading: false });
           }
         },
-        clearBooking: () => set({ booking: null, totalPrice: 0 }),
+        clearBooking: () =>
+          set({ bookingsResponseData: null, booking: null, totalPrice: 0 }),
       }),
       { name: "booking-store" }
     )
