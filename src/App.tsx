@@ -14,19 +14,12 @@ import UserProfilePage from "./pages/User/UserProfilePage";
 
 import ScrollToTop from "./components/ScrollToTop";
 import BookingConfirm from "./pages/Payment/BookingConfirm";
-import DashboardPage from "./pages/Auth/admin/DashboardPage";
-import AdminLayout from "./layouts/AdminLayout";
-import AdminProductsPage from "./pages/Auth/admin/ProductsPage";
 
 export default function App() {
   return (
     <Router>
       <ScrollToTop />
       <Routes>
-        {/* <Route element={<AdminLayout />}>
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/dashboard/products" element={<AdminProductsPage />} />
-        </Route> */}
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
